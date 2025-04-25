@@ -1,4 +1,4 @@
-import Sequelize from "../../node_modules/sequelize/types/sequelize";
+import { Sequelize } from 'sequelize'
 import {config} from  'dotenv';
 config();
 const dbconnection= new Sequelize(

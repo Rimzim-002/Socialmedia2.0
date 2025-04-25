@@ -1,20 +1,21 @@
 import Express from 'express';
-import dbconnection from './config/dbconnection';
+import dbconnection from './config/dbconnection.js';
 import { config } from 'dotenv';
+import "./models/usersModel";
 config();
-var app = Express();
-var port = 3000;
+const app = Express();
+const port = 3000;
 dbconnection.authenticate()
-    .then(function () {
+    .then(() => {
     console.log(" Database connection sucessfull");
 })
-    .catch(function (err) {
+    .catch((err) => {
     console.log(Error, "unable to  connnect");
 });
-app.get('/', function (req, res) {
-    //   res.status(200)json.({messsage:"Hello programmer"});
+app.get('/', (req, res) => {
+    res.send("Hello programmer");
     console.log('helo');
 });
-app.listen(port, function () {
-    console.log("Connected successfully on port ".concat(port));
+app.listen(port, () => {
+    console.log(`Connected successfully on port ${port}`);
 });

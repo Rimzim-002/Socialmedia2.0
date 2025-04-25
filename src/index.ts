@@ -1,6 +1,7 @@
 import Express, { Application, Request, Response } from 'express';
-import dbconnection from './config/dbconnection';
+import dbconnection from './config/dbconnection.js';
 import {config} from 'dotenv';
+import "./models/usersModel"
 config();
 
 const app: Application = Express();
@@ -17,7 +18,7 @@ dbconnection.authenticate()
 
 
 app.get('/', (req: Request, res: Response) => {
-  //   res.status(200)json.({messsage:"Hello programmer"});
+    res.send("Hello programmer");
   console.log('helo');
 });
 
