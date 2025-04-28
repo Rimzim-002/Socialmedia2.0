@@ -1,11 +1,11 @@
 import { DataTypes } from 'sequelize';
 import dbconnection from '../config/dbconnection.js';
-
-const Posts = dbconnection.define('users', {
+import { nanoid } from 'nanoid';
+const Users = dbconnection.define('users', {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
+    defaultValue: () => nanoid(),
   },
   name: {
     type: DataTypes.STRING,
@@ -24,7 +24,7 @@ const Posts = dbconnection.define('users', {
     defaultValue: DataTypes.NOW,
   },
 });
-Posts.sync()
+Users.sync()
   .then(() => {
     console.log('Table created successfully');
   })
@@ -32,4 +32,4 @@ Posts.sync()
     console.error('Error creating table:', error);
   });
 
-export default Posts;
+export default Users;

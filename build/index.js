@@ -1,21 +1,26 @@
-import Express from 'express';
+import express from 'express';
 import dbconnection from './config/dbconnection.js';
 import { config } from 'dotenv';
-import "./models/usersModel";
+import './models/userModel.js';
+import router from './Routes/userRoutes.js';
 config();
-const app = Express();
-const port = 3000;
-dbconnection.authenticate()
+const app = express();
+app.use(express.json());
+dbconnection
+    .authenticate()
     .then(() => {
-    console.log(" Database connection sucessfull");
+    console.log(' Database connection sucessfull');
 })
     .catch((err) => {
-    console.log(Error, "unable to  connnect");
+    console.log(Error, 'unable to  connnect');
 });
-app.get('/', (req, res) => {
-    res.send("Hello programmer");
+app.use(router);
+app.get('/test', (req, res) => {
+    res.send('Hello programmer');
     console.log('helo');
 });
-app.listen(port, () => {
-    console.log(`Connected successfully on port ${port}`);
+// const PORT = 5000 ;
+// console.log(PORT)
+app.listen(Number(process.env.port), () => {
+    console.log(`✅ Express server started   on port ${process.env.port}`);
 });
