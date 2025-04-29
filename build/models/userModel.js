@@ -5,7 +5,7 @@ const Users = dbconnection.define('users', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
-        defaultValue: () => nanoid()
+        defaultValue: () => nanoid(),
     },
     name: {
         type: DataTypes.STRING,

@@ -9,5 +9,4 @@ class APIResponse {
     return res.status(data.status).json({ error: Error });
   }
 }
-
-module.exports = new APIResponse();
+export default new APIResponse();

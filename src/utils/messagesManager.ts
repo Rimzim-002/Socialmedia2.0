@@ -9,6 +9,7 @@ const Messages = {
     PASSWORD_REQUIRED: 'Password is required',
     PASSWORD_WEAK: 'Password must be at least 8 characters long',
     USER_NOT_EXIST: ' User not exist',
+    INVALID_CREDENTIALS: 'Invalid credentials',
   },
   AUTH: {
     TOKEN_MISSING: 'Authorization token is missing',

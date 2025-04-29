@@ -1,8 +1,5 @@
 export default interface IUser {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
-  isActive: boolean;
-  phoneNumber: string;
-  countryCode: number;
+  password: string;
 }

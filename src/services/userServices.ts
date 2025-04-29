@@ -1,7 +1,6 @@
 import Users from '../models/userModel.js';
 import bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
-import IUser from '../utils/interfaces/IUser.js';
+
 const findbyEmail = async (email: string) => {
   try {
     const isUserExist = await Users.findOne({
@@ -10,12 +9,12 @@ const findbyEmail = async (email: string) => {
     return isUserExist;
   } catch (error) {
     console.error('Error in findbyEmail:', error);
-    return null;
+    throw error;
   }
 };
 
 const newUser = async (attributes: any) => {
-  const { name, email, password = null } = attributes;
+  const { name, email, password } = attributes;
   try {
     const hashPassword = await bcrypt.hash(password, 8);
     const user = await Users.create({
@@ -24,20 +23,23 @@ const newUser = async (attributes: any) => {
       password: hashPassword,
     });
     return user;
-  } catch (error:any) {
+  } catch (error: any) {
     console.error('Error in newUser:', error);
-  throw new Error(error);
+    throw new Error(error);
   }
 };
-const userlogin = async (email: string, password: string) => {
+const userlogin = async (attributes: any) => {
+  const { email, password } = attributes;
   try {
     const isUserExist = await Users.findOne({ where: { email } });
     if (isUserExist) {
-      const loginuser = await bcrypt.compare(
+      const isPasswordValid = await bcrypt.compare(
         password,
         isUserExist?.dataValues?.password,
       );
-      return isUserExist;
+      if (isPasswordValid) {
+        return isUserExist;
+      }
     }
   } catch (error) {
     console.error('Error in findbyEmail:', error);

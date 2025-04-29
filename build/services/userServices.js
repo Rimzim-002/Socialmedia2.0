@@ -3,36 +3,40 @@ import bcrypt from 'bcrypt';
 const findbyEmail = async (email) => {
     try {
         const isUserExist = await Users.findOne({
-            where: { email }
+            where: { email },
         });
         return isUserExist;
     }
     catch (error) {
         console.error('Error in findbyEmail:', error);
-        return null;
+        throw error;
     }
 };
-const newUser = async (name, email, password) => {
+const newUser = async (attributes) => {
+    const { name, email, password } = attributes;
     try {
         const hashPassword = await bcrypt.hash(password, 8);
         const user = await Users.create({
             name,
             email,
-            password: hashPassword
+            password: hashPassword,
         });
         return user;
     }
     catch (error) {
         console.error('Error in newUser:', error);
-        return null;
+        throw new Error(error);
     }
 };
-const userlogin = async (email, password) => {
+const userlogin = async (attributes) => {
+    const { email, password } = attributes;
     try {
         const isUserExist = await Users.findOne({ where: { email } });
         if (isUserExist) {
-            const loginuser = await bcrypt.compare(password, isUserExist?.dataValues?.password);
-            return isUserExist;
+            const isPasswordValid = await bcrypt.compare(password, isUserExist?.dataValues?.password);
+            if (isPasswordValid) {
+                return isUserExist;
+            }
         }
     }
     catch (error) {

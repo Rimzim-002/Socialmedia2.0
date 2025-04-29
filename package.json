@@ -25,6 +25,7 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/nanoid": "^2.1.0",
+    "@types/yup": "^0.29.14",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -34,7 +35,8 @@
     "prettier": "^3.5.3",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.7",
-    "sequelize-typescript": "^2.1.6"
+    "sequelize-typescript": "^2.1.6",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
