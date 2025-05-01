@@ -1,31 +1,43 @@
 import { DataTypes } from 'sequelize';
 import dbconnection from '../config/dbconnection.js';
-const Posts = dbconnection.define('users', {
+import Users from './userModel.js';
+import { nanoid } from 'nanoid';
+const Posts = dbconnection.define('posts', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         primaryKey: true,
-        autoIncrement: true,
+        defaultValue: () => nanoid(6),
     },
-    name: {
+    user_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        references: {
+            model: Users,
+            key: 'id',
+        },
+    },
+    image: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    email: {
+    caption: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    is_delete: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     },
-    timeStamp: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
+}, {
+    timestamps: true,
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
 });
+Users.hasMany(Posts, { foreignKey: 'user_id' });
+Posts.belongsTo(Users, { foreignKey: 'user_id' });
 Posts.sync()
     .then(() => {
-    console.log('Table created successfully');
+    console.log('  POST table created successfully');
 })
     .catch((error) => {
     console.error('Error creating table:', error);

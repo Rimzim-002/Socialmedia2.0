@@ -1,23 +1,25 @@
-import { findbyEmail, newUser, userlogin } from '../services/userServices.js';
+import { findbyEmail, newUser, UserExist, userlogin, updateUser, } from '../services/userServices.js';
 import Messages from '../utils/messagesManager.js';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import APIResponse from '../utils/apiResponse.js';
 import Tokenhandle from '../utils/jwtManager.js';
 import yup from 'yup';
+import { regex } from '../utils/regex.js';
+import apiResponse from '../utils/apiResponse.js';
 const signupUser = async (req, res) => {
     const { name, email, password } = req.body;
     const SignuSchema = yup.object({
         name: yup
             .string()
             .required('Name is required')
-            .min(2, 'Name must be at least 2 characters'),
+            .matches(regex.NAME_REG, 'invalid name format '),
         email: yup
             .string()
             .required('Email is required')
-            .email('Invalid email format'),
+            .matches(regex.EMAIL_REG, 'invalid emailformat  '),
         password: yup
             .string()
-            .min(6, 'Password must  must be at least 6 characters')
+            .matches(regex.PASSWORD_REG, 'passsword has eight characters including one uppercase letter, one lowercase letter, and one number or special character')
             .required(`Password is required`),
     });
     try {
@@ -31,7 +33,7 @@ const signupUser = async (req, res) => {
         const userCreate = { name, email, password };
         const user = await newUser(userCreate);
         res
-            .status(ResponseCode.SUCCESS)
+            .status(ResponseCode.CREATED_SUCESSFULY)
             .json({ Messages: Messages.USER.SIGNUP_SUCCESS, data: user });
     }
     catch (error) {
@@ -81,4 +83,33 @@ const signinUser = async (req, res) => {
             .json({ message: error.message || Messages.SYSTEM });
     }
 };
-export { signupUser, signinUser };
+const updatedUser = async (req, res) => {
+    const { id, ...updateData } = req.body;
+    try {
+        const isUserExist = await UserExist(id);
+        console.log('User existence check:', isUserExist);
+        if (!isUserExist) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: Messages.USER.USER_NOT_EXIST,
+                data: {},
+            });
+        }
+        const updatedUser = await updateUser({ id, updateData });
+        console.log('User updated:', updatedUser);
+        apiResponse.success(res, {
+            status: ResponseCode.SUCCESS,
+            message: Messages.USER.USER_UPDATED,
+            data: { user: updatedUser },
+        });
+    }
+    catch (error) {
+        console.error('Error updating user:', error);
+        apiResponse.error(res, {
+            status: ResponseCode.SYSTEM,
+            message: Messages.SYSTEM.SERVER_ERROR,
+            data: {},
+        });
+    }
+};
+export { signupUser, signinUser, updatedUser };

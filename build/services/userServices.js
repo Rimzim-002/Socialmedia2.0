@@ -12,6 +12,10 @@ const findbyEmail = async (email) => {
         throw error;
     }
 };
+const UserExist = async (id) => {
+    const isExist = await Users.findByPk(id);
+    return isExist;
+};
 const newUser = async (attributes) => {
     const { name, email, password } = attributes;
     try {
@@ -43,4 +47,12 @@ const userlogin = async (attributes) => {
         console.error('Error in findbyEmail:', error);
     }
 };
-export { findbyEmail, newUser, userlogin };
+const updateUser = async (attributes) => {
+    const { id, updateData } = attributes;
+    const userUpdate = await Users.update(updateData, { where: { id } });
+    if (userUpdate) {
+        const data = await Users.findOne({ where: { id } });
+        return data;
+    }
+};
+export { findbyEmail, newUser, userlogin, UserExist, updateUser };

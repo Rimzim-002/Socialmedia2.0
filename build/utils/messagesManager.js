@@ -10,6 +10,10 @@ const Messages = {
         PASSWORD_WEAK: 'Password must be at least 8 characters long',
         USER_NOT_EXIST: ' User not exist',
         INVALID_CREDENTIALS: 'Invalid credentials',
+        CREATED_SUCESSFULLY: ' Created Successfully',
+        USER_EXIST: 'User Already Exist',
+        USER_UPDATED: ' User Updated sucessfully',
+        POST_NOT_FOUND: 'No post Found ',
     },
     AUTH: {
         TOKEN_MISSING: 'Authorization token is missing',
@@ -22,6 +26,16 @@ const Messages = {
     },
     SYSTEM: {
         SERVER_ERROR: 'An unexpected error occurred. Please try again later',
+    },
+    POST: {
+        POST_CREATED_SUCESS: ' Post created  sucessfully',
+        POST_CREATED_FAILED: 'Post created  FAiled',
+        POST_UPDATED_SUCCESS: 'Post Update  sucessfully',
+        POST_UPDATED_FAIL: 'Post Update  fail',
+        POST_DELETE_FAIL: 'Post delete  fail',
+        POST_DELETE_SUCCESS: 'Post Update  sucessfully',
+        POST_NOT_FOUND: 'No post Found ',
+        ALL_POSTS: ' User Posts',
     },
 };
 export default Messages;

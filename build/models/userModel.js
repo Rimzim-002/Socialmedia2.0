@@ -5,7 +5,7 @@ const Users = dbconnection.define('users', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
-        defaultValue: () => nanoid(),
+        defaultValue: () => nanoid(6),
     },
     name: {
         type: DataTypes.STRING,
@@ -19,10 +19,10 @@ const Users = dbconnection.define('users', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    timeStamp: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
+}, {
+    timestamps: true,
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
 });
 Users.sync()
     .then(() => {
