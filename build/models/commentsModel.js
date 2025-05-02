@@ -14,8 +14,16 @@ const Comments = dbconnection.define('Comments', {
         allowNull: false,
         references: {
             model: Posts,
-            key: 'id'
-        }
+            key: 'id',
+        },
+    },
+    user_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        references: {
+            model: Users,
+            key: 'id',
+        },
     },
     content: {
         type: DataTypes.STRING,
@@ -23,15 +31,13 @@ const Comments = dbconnection.define('Comments', {
     },
     reply_id: {
         type: DataTypes.STRING,
-    },
-    user_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+        defaultValue: null,
     },
     is_delete: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
-    }
+        defaultValue: false,
+    },
 }, {
     timestamps: true,
     createdAt: 'createdAt',
@@ -44,8 +50,8 @@ Comments.belongsTo(Posts, { foreignKey: 'post_id' });
 Users.hasMany(Comments, { foreignKey: 'user_id' });
 Comments.belongsTo(Users, { foreignKey: 'user_id' });
 // Relation of comments with nested comments
-Comments.hasMany(Comments, { foreignKey: "replyId", as: "replies" });
-Comments.belongsTo(Comments, { foreignKey: "replyId", as: "parentComment" });
+Comments.hasMany(Comments, { foreignKey: 'reply_id', as: 'replies' });
+Comments.belongsTo(Comments, { foreignKey: 'reply_id', as: 'parentComment' });
 Comments.sync()
     .then(() => {
     console.log('Comments table created successfully');

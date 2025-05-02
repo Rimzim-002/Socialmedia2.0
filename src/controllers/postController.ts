@@ -7,14 +7,14 @@ import {
   postdelete,
   userposts,
 } from '../services/postServices.js';
-import yup, { object } from 'yup';
+import yup from 'yup';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import Messages from '../utils/messagesManager.js';
 import { Response, Request } from 'express';
 import apiResponse from '../utils/apiResponse.js';
 const addPost = async (req: Request, res: Response) => {
   const { user_id, image, caption } = req.body;
-  const addPostSchema = yup.object({
+  const addPostSchema = yup.object().shape({
     image: yup.string().required('Image is required'),
 
     caption: yup
@@ -52,9 +52,17 @@ const addPost = async (req: Request, res: Response) => {
   }
 };
 const upatePost = async (req: Request, res: Response) => {
-  const { id, ...updateFields } = req.body;
+  const {user_id, id, ...updateFields } = req.body;
 
   try {
+    const isUserExist = await findUSer(user_id);
+    if (!isUserExist) {
+      apiResponse.error(res, {
+        status: ResponseCode.BAD_REQUEST,
+        message: Messages.USER.USER_NOT_EXIST,
+        data: {},
+      });
+    }
     const isPostExist = await postExist(id);
     if (!isPostExist) {
       apiResponse.error(res, {
@@ -81,8 +89,16 @@ const upatePost = async (req: Request, res: Response) => {
 };
 
 const deletePost = async (req: Request, res: Response) => {
-  const { id } = req.body;
+  const { id ,user_id} = req.body;
   try {
+    const isUserExist = await findUSer(user_id);
+    if (!isUserExist) {
+      apiResponse.error(res, {
+        status: ResponseCode.BAD_REQUEST,
+        message: Messages.USER.USER_NOT_EXIST,
+        data: {},
+      });
+    }
     const isPostExist = await postExist(id);
     if (!isPostExist) {
       res.status(ResponseCode.BAD_REQUEST).json({
@@ -133,7 +149,7 @@ const allPosts = async (req: Request, res: Response) => {
   }
 };
 const userPost = async (req: Request, res: Response) => {
-  const { user_id ,id} = req.body;
+  const { user_id, id } = req.body;
   try {
     const isUserExist = await findUSer(user_id);
     if (!isUserExist) {
@@ -160,4 +176,4 @@ const userPost = async (req: Request, res: Response) => {
     });
   }
 };
-export { addPost, upatePost, deletePost, allPosts,userPost };
+export { addPost, upatePost, deletePost, allPosts, userPost };

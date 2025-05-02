@@ -35,7 +35,19 @@ const Messages = {
         POST_DELETE_FAIL: 'Post delete  fail',
         POST_DELETE_SUCCESS: 'Post Update  sucessfully',
         POST_NOT_FOUND: 'No post Found ',
+        POST_FOUND: 'POST FOUND',
         ALL_POSTS: ' User Posts',
+    },
+    COMMENT: {
+        SUCESS: ' Comment  created  successfull',
+        ERROR: ' Error in Creating  commnet',
+        NOT_FOUND: 'Comment not  Found',
+        FETCH_SUCCESS: 'Fetch completed',
+        UNABLE_TO_FETCH: 'Unable to fetch',
+        COMMENT_DELETE: 'commnet deleted successfully',
+        COMMENT_UPDATE: 'comment update successfully',
+        COMMENT_UPD_FAILED: 'comment update  failed',
+        COMMENT_DLT_FAILED: 'comment delete  failed',
     },
 };
 export default Messages;

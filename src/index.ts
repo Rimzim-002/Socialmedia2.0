@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import './models/userModel.js';
 import router from './Routes/userRoutes.js';
 import postrouter from './Routes/postRoutes.js';
-import commentRouter from './Routes/commentRoutes.js'
+import commentRouter from './Routes/commentRoutes.js';
 config();
 
 const app: Application = express();
@@ -19,7 +19,7 @@ dbconnection
   });
 app.use(router);
 app.use(postrouter);
-app.use(commentRouter)
+app.use(commentRouter);
 // const PORT = 5000 ;
 // console.log(PORT)
 app.listen(Number(process.env.port), () => {

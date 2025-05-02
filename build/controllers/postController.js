@@ -5,7 +5,7 @@ import Messages from '../utils/messagesManager.js';
 import apiResponse from '../utils/apiResponse.js';
 const addPost = async (req, res) => {
     const { user_id, image, caption } = req.body;
-    const addPostSchema = yup.object({
+    const addPostSchema = yup.object().shape({
         image: yup.string().required('Image is required'),
         caption: yup
             .string()

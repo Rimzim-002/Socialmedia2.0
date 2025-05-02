@@ -3,7 +3,6 @@ import dbconnection from '../config/dbconnection.js';
 import { nanoid } from 'nanoid';
 import Posts from './postModel.js';
 import Users from './userModel.js';
-import { HasMany } from 'sequelize-typescript';
 const Comments = dbconnection.define(
   'Comments',
   {
@@ -15,28 +14,34 @@ const Comments = dbconnection.define(
     post_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      references:{
-        model:Posts,
-        key:'id'
-      }
+      references: {
+        model: Posts,
+        key: 'id',
+      },
+    },
+
+    user_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: Users,
+        key: 'id',
+      },
     },
     content: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+
     reply_id: {
       type: DataTypes.STRING,
-      
-
+      allowNull: true,
+      defaultValue: null,
     },
-    user_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    is_delete:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:false
-    }
+    is_delete: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     timestamps: true,
@@ -45,14 +50,14 @@ const Comments = dbconnection.define(
   },
 );
 // Realtion of posts and commnets
- Posts.hasMany(Comments,{foreignKey:'post_id'}) ;  
- Comments.belongsTo(Posts,{foreignKey:'post_id'})
+Posts.hasMany(Comments, { foreignKey: 'post_id' });
+Comments.belongsTo(Posts, { foreignKey: 'post_id' });
 // Relation of users and comments
-Users.hasMany(Comments,{foreignKey:'user_id'}) ;  
-Comments.belongsTo(Users,{foreignKey:'user_id'})
+Users.hasMany(Comments, { foreignKey: 'user_id' });
+Comments.belongsTo(Users, { foreignKey: 'user_id' });
 // Relation of comments with nested comments
-Comments.hasMany(Comments, { foreignKey: "replyId", as: "replies" });
-Comments.belongsTo(Comments, { foreignKey: "replyId", as: "parentComment" });
+Comments.hasMany(Comments, { foreignKey: 'reply_id', as: 'replies' });
+Comments.belongsTo(Comments, { foreignKey: 'reply_id', as: 'parentComment' });
 
 Comments.sync()
   .then(() => {

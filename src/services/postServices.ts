@@ -2,7 +2,7 @@ import { error } from 'console';
 import Posts from '../models/postModel.js';
 import Users from '../models/userModel.js';
 
-const findUSer = async (userID: string) => {
+const findUSer = async (userID: string|number) => {
   const isUserExist = await Users.findOne({
     where: { id: userID },
   });
@@ -32,8 +32,10 @@ const postExist = async (postId: string) => {
   }
   throw new Error('Post not found');
 };
-const postAvail = async (postId: string|Number) => {
-  const isPostExist = await Posts.findOne({where:{id:postId,is_delete:false}});
+const postAvail = async (postId: string | Number) => {
+  const isPostExist = await Posts.findOne({
+    where: { id: postId, is_delete: false },
+  });
   if (isPostExist) {
     return isPostExist;
   }
@@ -62,4 +64,12 @@ const userposts = async (user_id: string | number) => {
   });
   return data;
 };
-export { findUSer, postData, postExist, postUpdate, postdelete, userposts,postAvail };
+export {
+  findUSer,
+  postData,
+  postExist,
+  postUpdate,
+  postdelete,
+  userposts,
+  postAvail,
+};

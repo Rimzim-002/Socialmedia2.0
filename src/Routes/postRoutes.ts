@@ -10,5 +10,5 @@ router.post('/addPost', addPost);
 router.patch('/updatePost', upatePost);
 router.patch('/deletePost', deletePost);
 router.get('/userPosts', allPosts);
-router.get('/userPost',userPost)
+router.get('/userPost', userPost);
 export default router;

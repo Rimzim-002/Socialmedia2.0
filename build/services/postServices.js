@@ -34,7 +34,9 @@ const postExist = async (postId) => {
     throw new Error('Post not found');
 };
 const postAvail = async (postId) => {
-    const isPostExist = await Posts.findOne({ where: { id: postId, is_delete: false } });
+    const isPostExist = await Posts.findOne({
+        where: { id: postId, is_delete: false },
+    });
     if (isPostExist) {
         return isPostExist;
     }
@@ -59,4 +61,4 @@ const userposts = async (user_id) => {
     });
     return data;
 };
-export { findUSer, postData, postExist, postUpdate, postdelete, userposts, postAvail };
+export { findUSer, postData, postExist, postUpdate, postdelete, userposts, postAvail, };
