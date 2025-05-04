@@ -30,7 +30,7 @@ const newUser = async (attributes) => {
             email,
             password: hashPassword,
         });
-        return user.get();
+        return user;
     }
     catch (error) {
         throw new Error(error);

@@ -155,7 +155,8 @@ const deletePost = async (req: Request, res: Response) => {
       message: Messages.POST.POST_DELETE_SUCCESS,
       data: {},
     });
-  } catch (error: any) {
+  } 
+  catch (error: any) {
     // Handling  the validation errors centrally
     if (error instanceof yup.ValidationError) {
       const simplifiedErrors = error.inner.map((err: any) => ({

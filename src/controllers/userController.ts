@@ -79,7 +79,7 @@ const signinUser = async (req: Request, res: Response) => {
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.FORBIDDEN,
-        message: Messages.USER.EMAIL_EXISTS,
+        message: Messages.VALIDATION.INVALID_INPUT,
         data: {},
       });
     }

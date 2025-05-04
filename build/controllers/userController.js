@@ -5,7 +5,7 @@ import APIResponse from '../utils/apiResponse.js';
 import Tokenhandle from '../utils/jwtManager.js';
 import yup from 'yup';
 import apiResponse from '../utils/apiResponse.js';
-import { signinSchema, signupSchema, updateUserSchema } from '../utils/Validations/userValidation.js';
+import { signinSchema, signupSchema, updateUserSchema, } from '../utils/Validations/userValidation.js';
 //signup user
 const signupUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -57,11 +57,11 @@ const signinUser = async (req, res) => {
     try {
         await signinSchema.validate(req.body, { abortEarly: false });
         const isUserExist = await findbyEmail(email);
-        // user exist 
+        // user exist
         if (!isUserExist) {
             apiResponse.error(res, {
                 status: ResponseCode.FORBIDDEN,
-                message: Messages.USER.EMAIL_EXISTS,
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: {},
             });
         }
@@ -69,6 +69,7 @@ const signinUser = async (req, res) => {
         const loginUser = await userlogin(userloged); // login  user
         if (loginUser) {
             const token = Tokenhandle.generateToken({
+                //generating  token
                 email: loginUser.email,
                 username: loginUser.name,
             });

@@ -19,6 +19,7 @@ export const signupSchema = yup.object().shape({
     .string()
     .required('Name is required')
     .min(2, 'Name must be at least 2 characters')
+    .max(20)
     .matches(/^[a-zA-Z\s]+$/, 'Name must contain only letters'),
   email: emailValidation,
   password: passwordValidation,

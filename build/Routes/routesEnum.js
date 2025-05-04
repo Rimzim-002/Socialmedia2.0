@@ -3,7 +3,7 @@ import userRoutes from './userRoutes.js';
 import postRoutes from './postRoutes.js';
 import commentRoutes from './commentRoutes.js';
 import likeRoutes from './likerouter.js';
-// import { APIPaths } from '../Constants/apipath.js';  
+// import { APIPaths } from '../Constants/apipath.js';
 const router = Router();
 router.use(userRoutes);
 router.use(postRoutes);

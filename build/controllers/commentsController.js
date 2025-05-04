@@ -1,7 +1,7 @@
 import yup from 'yup';
 import { findUSer, postExist } from '../services/postServices.js';
 import { CommentExist, createComment, destroyComment, fetchCommnets, updateComment, } from '../services/commentServices.js';
-import { commentSchema, getAllCommentsSchema, deleteCommentSchema, updateCommentSchema, getCommentSchema } from "../utils/Validations/commnetsvalidation.js";
+import { commentSchema, getAllCommentsSchema, deleteCommentSchema, updateCommentSchema, getCommentSchema, } from '../utils/Validations/commnetsvalidation.js';
 import apiResponse from '../utils/apiResponse.js';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import Messages from '../utils/messagesManager.js';
@@ -18,7 +18,7 @@ const addComment = async (req, res) => {
                 data: {},
             });
         }
-        const isPostExist = await postExist(post_id); // check  post exist 
+        const isPostExist = await postExist(post_id); // check  post exist
         if (!isPostExist) {
             apiResponse.error(res, {
                 status: ResponseCode.NOT_FOUND,
@@ -75,7 +75,7 @@ const getAllcomments = async (req, res) => {
                 data: {},
             });
         }
-        const getComments = await fetchCommnets(post_id); // fetch comments 
+        const getComments = await fetchCommnets(post_id); // fetch comments
         apiResponse.success(res, {
             status: ResponseCode.SUCCESS,
             message: Messages.POST.POST_FOUND,
@@ -108,7 +108,7 @@ const deletecommnet = async (req, res) => {
     const { id, user_id } = req.body;
     try {
         await deleteCommentSchema.validate(req.body, { abortEarly: false });
-        const isUserExist = await findUSer(user_id); //  check userexist 
+        const isUserExist = await findUSer(user_id); //  check userexist
         if (!isUserExist) {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
@@ -152,7 +152,7 @@ const updatecomment = async (req, res) => {
     const { user_id, id, content } = req.body;
     try {
         await updateCommentSchema.validate(req.body, { abortEarly: false });
-        const isUserExist = await findUSer(user_id); //  check userexist 
+        const isUserExist = await findUSer(user_id); //  check userexist
         if (!isUserExist) {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
@@ -219,7 +219,7 @@ const getComment = async (req, res) => {
         apiResponse.success(res, {
             status: ResponseCode.SUCCESS,
             message: Messages.COMMENT.FETCH_SUCCESS,
-            data: { isCommentexist },
+            data: { isCommentexist }, // show the comment
         });
     }
     catch (error) {

@@ -16,7 +16,7 @@ const createComment = async (attributes) => {
             post_id,
             user_id,
             content,
-            reply_id: reply_id ? reply_id : null
+            reply_id: reply_id ? reply_id : null,
         });
         return newComment;
     }

@@ -74,7 +74,7 @@ const upatePost = async (req, res) => {
         const updatedPost = await postUpdate({
             id,
             user_id,
-            updateData: updateFields
+            updateData: updateFields,
         });
         // upate the post
         apiResponse.success(res, {

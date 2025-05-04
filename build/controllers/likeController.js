@@ -45,7 +45,9 @@ const addLike = async (req, res) => {
         if (!isTermExist) {
             apiResponse.error(res, {
                 status: ResponseCode.NOT_FOUND,
-                message: type === 'post' ? Messages.POST.POST_NOT_FOUND : Messages.COMMENT.NOT_FOUND,
+                message: type === 'post'
+                    ? Messages.POST.POST_NOT_FOUND
+                    : Messages.COMMENT.NOT_FOUND,
                 data: {},
             });
         }
