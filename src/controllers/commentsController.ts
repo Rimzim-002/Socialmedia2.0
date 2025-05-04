@@ -8,23 +8,30 @@ import {
   fetchCommnets,
   updateComment,
 } from '../services/commentServices.js';
-import{commentSchema,
+import {
+  commentSchema,
   getAllCommentsSchema,
   deleteCommentSchema,
   updateCommentSchema,
-  getCommentSchema} from "../utils/Validations/commnetsvalidation.js"
+  getCommentSchema,
+} from '../utils/Validations/commnetsvalidation.js';
 import apiResponse from '../utils/apiResponse.js';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import Messages from '../utils/messagesManager.js';
-import { IAddComment, IDeleteComment, IGetComments, IGetSingleComment, IUpdateComment } from '../utils/interfaces/Icomment.js';
+import {
+  IAddComment,
+  IDeleteComment,
+  IGetComments,
+  IGetSingleComment,
+  IUpdateComment,
+} from '../utils/interfaces/Icomment.js';
 // add comment
 const addComment = async (req: Request, res: Response) => {
   const { post_id, user_id, content, reply_id } = req.body as IAddComment;
 
-
   try {
-    await commentSchema.validate(req.body);// validation
-    const isUserExist = await findUSer(user_id);// check user exist
+    await commentSchema.validate(req.body); // validation
+    const isUserExist = await findUSer(user_id); // check user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -32,7 +39,7 @@ const addComment = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isPostExist = await postExist(post_id);// check  post exist 
+    const isPostExist = await postExist(post_id); // check  post exist
     if (!isPostExist) {
       apiResponse.error(res, {
         status: ResponseCode.NOT_FOUND,
@@ -41,9 +48,7 @@ const addComment = async (req: Request, res: Response) => {
       });
     }
 
-   
-
-    const newComment  = await createComment(req.body); // create commnet
+    const newComment = await createComment(req.body); // create commnet
 
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
@@ -76,10 +81,10 @@ const addComment = async (req: Request, res: Response) => {
 // get all comments
 const getAllcomments = async (req: Request, res: Response) => {
   const { post_id, user_id } = req.body as IGetComments;
-  
+
   try {
-    await getAllCommentsSchema.validate(req.body, { abortEarly: false });//validation
-    const isUserExist = await findUSer(user_id);// check user  exist
+    await getAllCommentsSchema.validate(req.body, { abortEarly: false }); //validation
+    const isUserExist = await findUSer(user_id); // check user  exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -87,7 +92,7 @@ const getAllcomments = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isPostExist = await postExist(post_id);// checks  post   exist
+    const isPostExist = await postExist(post_id); // checks  post   exist
     if (!isPostExist) {
       apiResponse.error(res, {
         status: ResponseCode.NOT_FOUND,
@@ -95,11 +100,11 @@ const getAllcomments = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const getComments = await fetchCommnets(post_id);// fetch comments 
+    const getComments = await fetchCommnets(post_id); // fetch comments
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.POST.POST_FOUND,
-      data: {getComments},
+      data: { getComments },
     });
   } catch (error: any) {
     // Handling  the validation errors centrally
@@ -127,10 +132,10 @@ const getAllcomments = async (req: Request, res: Response) => {
 //delete comment
 const deletecommnet = async (req: Request, res: Response) => {
   const { id, user_id } = req.body as IDeleteComment;
-  
+
   try {
     await deleteCommentSchema.validate(req.body, { abortEarly: false });
-    const isUserExist = await findUSer(user_id);//  check userexist 
+    const isUserExist = await findUSer(user_id); //  check userexist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -145,7 +150,7 @@ const deletecommnet = async (req: Request, res: Response) => {
         .json({ Messages: Messages.COMMENT.NOT_FOUND });
     }
 
-    const deleteComment = await destroyComment(id);// delete the comment
+    const deleteComment = await destroyComment(id); // delete the comment
     res
       .status(ResponseCode.SUCCESS)
       .json({ Messages: Messages.COMMENT.COMMENT_DELETE, data: {} });
@@ -177,7 +182,7 @@ const updatecomment = async (req: Request, res: Response) => {
 
   try {
     await updateCommentSchema.validate(req.body, { abortEarly: false });
-    const isUserExist = await findUSer(user_id);//  check userexist 
+    const isUserExist = await findUSer(user_id); //  check userexist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -185,7 +190,7 @@ const updatecomment = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isCommentexist = await CommentExist(id);// checks comment exist
+    const isCommentexist = await CommentExist(id); // checks comment exist
     if (!isCommentexist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -193,8 +198,8 @@ const updatecomment = async (req: Request, res: Response) => {
         data: {},
       });
     }
-  
-    const updateData: IUpdateComment = {user_id, id, content }; // ✅ CORRECT
+
+    const updateData: IUpdateComment = { user_id, id, content }; // ✅ CORRECT
 
     const updatedComment = await updateComment(updateData);
     res.status(ResponseCode.SUCCESS).json({
@@ -228,8 +233,8 @@ const getComment = async (req: Request, res: Response) => {
   const { id, user_id } = req.body as IGetSingleComment;
 
   try {
-    await getCommentSchema.validate(req.body, { abortEarly: false });// validation
-    const isUserExist = await findUSer(user_id);// check user exist
+    await getCommentSchema.validate(req.body, { abortEarly: false }); // validation
+    const isUserExist = await findUSer(user_id); // check user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -249,7 +254,7 @@ const getComment = async (req: Request, res: Response) => {
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.COMMENT.FETCH_SUCCESS,
-      data: {isCommentexist},
+      data: { isCommentexist }, // show the comment
     });
   } catch (error: any) {
     // Handling  the validation errors centrally

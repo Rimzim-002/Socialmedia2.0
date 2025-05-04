@@ -5,7 +5,7 @@ const passwordValidation = yup
   .required('Password is required')
   .matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/,
-    'Password must be at least 8 characters, include uppercase, lowercase, and a number/special character'
+    'Password must be at least 8 characters, include uppercase, lowercase, and a number/special character',
   );
 
 const emailValidation = yup
@@ -21,7 +21,7 @@ export const signupSchema = yup.object().shape({
     .min(2, 'Name must be at least 2 characters')
     .matches(/^[a-zA-Z\s]+$/, 'Name must contain only letters'),
   email: emailValidation,
-  password: passwordValidation
+  password: passwordValidation,
 });
 
 // Signin Schema
@@ -30,7 +30,7 @@ export const signinSchema = yup.object().shape({
   password: yup
     .string()
     .required('Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .min(6, 'Password must be at least 6 characters'),
 });
 
 // Update User Schema
@@ -41,5 +41,5 @@ export const updateUserSchema = yup.object().shape({
     .min(2, 'Name must be at least 2 characters')
     .matches(/^[a-zA-Z\s]+$/, 'Name must contain only letters'),
   email: yup.string().optional().email('Invalid email format'),
-  password: passwordValidation.optional()
+  password: passwordValidation.optional(),
 });

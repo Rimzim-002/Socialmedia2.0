@@ -26,7 +26,7 @@ const addPost = async (req: Request, res: Response) => {
   const { user_id, image, caption } = req.body as Ipost;
 
   try {
-    await validateRequest(addPostSchema, req.body);// validaion
+    await validateRequest(addPostSchema, req.body); // validaion
     // Check if user exist
     const isUserExist = await findUSer(user_id);
     if (!isUserExist) {
@@ -72,8 +72,8 @@ const upatePost = async (req: Request, res: Response) => {
   const { user_id, id, ...updateFields } = req.body as PostUpdate;
 
   try {
-    await validateRequest(updatePostSchema, req.body);// validation
-// check user exist
+    await validateRequest(updatePostSchema, req.body); // validation
+    // check user exist
     const isUserExist = await findUSer(user_id);
     if (!isUserExist) {
       apiResponse.error(res, {
@@ -93,10 +93,10 @@ const upatePost = async (req: Request, res: Response) => {
     }
 
     const updatedPost = await postUpdate({
-  id,
-  user_id,
-  updateData: updateFields as Partial<Ipost>
-});
+      id,
+      user_id,
+      updateData: updateFields as Partial<Ipost>,
+    });
 
     // upate the post
 
@@ -133,8 +133,8 @@ const deletePost = async (req: Request, res: Response) => {
   const { id, user_id } = req.body;
 
   try {
-    await validateRequest(deletePostSchema, req.body);// validation
-    const isUserExist = await findUSer(user_id);// user exist
+    await validateRequest(deletePostSchema, req.body); // validation
+    const isUserExist = await findUSer(user_id); // user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -142,14 +142,14 @@ const deletePost = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isPostExist = await postExist(id);// post exist
+    const isPostExist = await postExist(id); // post exist
     if (!isPostExist) {
       res.status(ResponseCode.BAD_REQUEST).json({
         status: ResponseCode.BAD_REQUEST,
         Messages: Messages.USER.POST_NOT_FOUND,
       });
     }
-    const deletedPost = await postdelete(id);// delete post
+    const deletedPost = await postdelete(id); // delete post
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.POST.POST_DELETE_SUCCESS,
@@ -184,7 +184,7 @@ const allPosts = async (req: Request, res: Response) => {
 
   try {
     await validateRequest(userPostsSchema, req.body);
-    const isUserExist = await findUSer(user_id);// validation
+    const isUserExist = await findUSer(user_id); // validation
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -193,7 +193,7 @@ const allPosts = async (req: Request, res: Response) => {
       });
     }
 
-    const userAllPosts = await userposts(user_id);// fetch  users all  posts
+    const userAllPosts = await userposts(user_id); // fetch  users all  posts
     if (userAllPosts) {
       apiResponse.success(res, {
         status: ResponseCode.SUCCESS,
@@ -229,7 +229,7 @@ const userPost = async (req: Request, res: Response) => {
   const { user_id, id } = req.body;
 
   try {
-    await validateRequest(singlePostSchema, req.body);// validation
+    await validateRequest(singlePostSchema, req.body); // validation
     const isUserExist = await findUSer(user_id);
     if (!isUserExist) {
       apiResponse.error(res, {

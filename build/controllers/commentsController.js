@@ -54,6 +54,7 @@ const addComment = async (req, res) => {
         });
     }
 };
+// get all comments
 const getAllcomments = async (req, res) => {
     const { post_id, user_id } = req.body;
     try {
@@ -78,7 +79,7 @@ const getAllcomments = async (req, res) => {
         apiResponse.success(res, {
             status: ResponseCode.SUCCESS,
             message: Messages.POST.POST_FOUND,
-            data: getComments,
+            data: { getComments },
         });
     }
     catch (error) {
@@ -102,6 +103,7 @@ const getAllcomments = async (req, res) => {
         });
     }
 };
+//delete comment
 const deletecommnet = async (req, res) => {
     const { id, user_id } = req.body;
     try {
@@ -148,17 +150,17 @@ const deletecommnet = async (req, res) => {
 };
 const updatecomment = async (req, res) => {
     const { user_id, id, content } = req.body;
-    // if (!user_id) {
-    //    apiResponse.error(res, {
-    //     status: ResponseCode.BAD_REQUEST,
-    //     message: Messages.USER.USER_NOT_EXIST,
-    //     data: {},
-    //   });
-    // }
     try {
         await updateCommentSchema.validate(req.body, { abortEarly: false });
+        const isUserExist = await findUSer(user_id); //  check userexist 
+        if (!isUserExist) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: Messages.USER.USER_NOT_EXIST,
+                data: {},
+            });
+        }
         const isCommentexist = await CommentExist(id); // checks comment exist
-        // const isUserExist = await findUSer(user_id);// checks is user exist
         if (!isCommentexist) {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
@@ -166,14 +168,7 @@ const updatecomment = async (req, res) => {
                 data: {},
             });
         }
-        // if (!isUserExist) {
-        //   apiResponse.error(res, {
-        //     status: ResponseCode.BAD_REQUEST,
-        //     message: Messages.USER.USER_NOT_EXIST,
-        //     data: {},
-        //   });
-        // }
-        const updateData = { id, content }; // ✅ CORRECT
+        const updateData = { user_id, id, content }; // ✅ CORRECT
         const updatedComment = await updateComment(updateData);
         res.status(ResponseCode.SUCCESS).json({
             Messages: Messages.USER.SIGNUP_SUCCESS,

@@ -14,13 +14,16 @@ import APIResponse from '../utils/apiResponse.js';
 import Tokenhandle from '../utils/jwtManager.js';
 import yup, { string } from 'yup';
 import apiResponse from '../utils/apiResponse.js';
-import { signinSchema, signupSchema, updateUserSchema } from '../utils/Validations/userValidation.js';
+import {
+  signinSchema,
+  signupSchema,
+  updateUserSchema,
+} from '../utils/Validations/userValidation.js';
 
 //signup user
 const signupUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body as IUser;
   // validations
-
 
   try {
     await signupSchema.validate(req.body, { abortEarly: false });
@@ -35,7 +38,7 @@ const signupUser = async (req: Request, res: Response) => {
       });
     }
     const userCreate: IUser = { name, email, password };
-    const user = await newUser(userCreate);// creating  user
+    const user = await newUser(userCreate); // creating  user
     apiResponse.success(res, {
       status: ResponseCode.CREATED_SUCESSFULY,
       message: Messages.USER.SIGNUP_SUCCESS,
@@ -67,12 +70,12 @@ const signupUser = async (req: Request, res: Response) => {
 // signin user
 const signinUser = async (req: Request, res: Response) => {
   const { email, password } = req.body as Ilogin;
-// validations
+  // validations
 
   try {
     await signinSchema.validate(req.body, { abortEarly: false });
     const isUserExist = await findbyEmail(email);
-    // user exist 
+    // user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.FORBIDDEN,
@@ -81,9 +84,10 @@ const signinUser = async (req: Request, res: Response) => {
       });
     }
     const userloged: Ilogin = { email, password };
-    const loginUser = await userlogin(userloged);// login  user
+    const loginUser = await userlogin(userloged); // login  user
     if (loginUser) {
-      const token = Tokenhandle.generateToken({ //generating  token
+      const token = Tokenhandle.generateToken({
+        //generating  token
         email: loginUser.email,
         username: loginUser.name,
       });
@@ -121,10 +125,10 @@ const updatedUser = async (req: Request, res: Response) => {
   const { id, updateData } = req.body as IUserUpdate;
 
   try {
-    await updateUserSchema.validate(req.body,{abortEarly:false})
+    await updateUserSchema.validate(req.body, { abortEarly: false });
     const isUserExist = await UserExist(id);
     if (!isUserExist) {
-       apiResponse.error(res, {
+      apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
         message: Messages.USER.USER_NOT_EXIST,
         data: {},
@@ -135,7 +139,7 @@ const updatedUser = async (req: Request, res: Response) => {
     if (updateData.email) {
       const existingUser = await findbyEmail(updateData.email);
       if (existingUser && existingUser.id !== id) {
-         apiResponse.error(res, {
+        apiResponse.error(res, {
           status: ResponseCode.FORBIDDEN,
           message: Messages.USER.EMAIL_EXISTS,
           data: {},
@@ -157,20 +161,19 @@ const updatedUser = async (req: Request, res: Response) => {
         message: err.message,
       }));
 
-       apiResponse.error(res, {
+      apiResponse.error(res, {
         status: 400,
         message: 'Validation failed',
         data: simplifiedErrors,
       });
     }
 
-     apiResponse.error(res, {
+    apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
       message: Messages.SYSTEM.SERVER_ERROR,
       data: { error: error.message },
     });
   }
 };
-
 
 export { signupUser, signinUser, updatedUser };

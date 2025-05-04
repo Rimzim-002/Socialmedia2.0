@@ -5,16 +5,16 @@ import Messages from '../utils/messagesManager.js';
 import Likes from '../models/likesModel.js';
 import Posts from '../models/postModel.js';
 import Comments from '../models/commentsModel.js';
-import {IFetchLikes, ILike} from '../utils/interfaces/Ilike.js';
+import { IFetchLikes, ILike } from '../utils/interfaces/Ilike.js';
 import { findUSer } from '../services/postServices.js';
-import  {createLike, getLikes } from '../services/likeServices.js';
+import { createLike, getLikes } from '../services/likeServices.js';
 import addLikeSchema from '../utils/Validations/likeValidation.js';
 
 const addLike = async (req: Request, res: Response) => {
   const { user_id, type, post_id, comment_id } = req.body as ILike;
 
   try {
-      await addLikeSchema.validate(req.body,{abortEarly:false})// validation
+    await addLikeSchema.validate(req.body, { abortEarly: false }); // validation
     //  Check if user exists
     const isUserExist = await findUSer(user_id);
     if (!isUserExist) {
@@ -27,7 +27,7 @@ const addLike = async (req: Request, res: Response) => {
 
     // Check the type is post or comment
     if (type !== 'post' && type !== 'comment') {
-       apiResponse.error(res, {
+      apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
         message: 'Invalid type. It must be "post" or "comment".',
         data: {},
@@ -37,23 +37,25 @@ const addLike = async (req: Request, res: Response) => {
     //  Check if the post or comment exists
     let isTermExist = false;
 
-    if (type === 'post'&& post_id) {
+    if (type === 'post' && post_id) {
       const post = await Posts.findByPk(post_id);
-      if (post){
-         isTermExist = true;
-        }
-
+      if (post) {
+        isTermExist = true;
+      }
     } else if (type === 'comment' && comment_id) {
       const comment = await Comments.findByPk(comment_id);
-      if (comment)
-        { isTermExist = true;
-        }
+      if (comment) {
+        isTermExist = true;
+      }
     }
 
     if (!isTermExist) {
-     apiResponse.error(res, {
+      apiResponse.error(res, {
         status: ResponseCode.NOT_FOUND,
-        message: type === 'post' ? Messages.POST.POST_NOT_FOUND : Messages.COMMENT.NOT_FOUND,
+        message:
+          type === 'post'
+            ? Messages.POST.POST_NOT_FOUND
+            : Messages.COMMENT.NOT_FOUND,
         data: {},
       });
     }
@@ -63,7 +65,8 @@ const addLike = async (req: Request, res: Response) => {
       where: {
         user_id,
         type,
-        [type === 'post' ? 'post_id' : 'comment_id']: type === 'post' ? post_id : comment_id,
+        [type === 'post' ? 'post_id' : 'comment_id']:
+          type === 'post' ? post_id : comment_id,
       },
     });
 
@@ -82,17 +85,17 @@ const addLike = async (req: Request, res: Response) => {
       comment_id: type === 'comment' ? comment_id : null,
       status: 'like', // include this explicitly
     };
-    
+
     const createdLike = await createLike(data);
-    
-   apiResponse.success(res, {
+
+    apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: `Like added successfully to ${type}`,
       data: { createdLike },
     });
-  } catch (error:any) {
+  } catch (error: any) {
     console.error(error);
-     apiResponse.error(res, {
+    apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
       message: 'An error occurred while adding the like.',
       data: { error: error.message },
@@ -103,9 +106,8 @@ const fetchLikes = async (req: Request, res: Response) => {
   const { type, post_id, comment_id } = req.body as Partial<IFetchLikes>;
 
   try {
-  
     if (type !== 'post' && type !== 'comment') {
-       apiResponse.error(res, {
+      apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
         message: 'Invalid type. It must be "post" or "comment".',
         data: {},
@@ -115,7 +117,7 @@ const fetchLikes = async (req: Request, res: Response) => {
     const id = type === 'post' ? post_id : comment_id;
 
     if (!id) {
-     apiResponse.error(res, {
+      apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
         message: 'ID is required to fetch likes.',
         data: {},
@@ -125,16 +127,16 @@ const fetchLikes = async (req: Request, res: Response) => {
     const validId = id as string | number;
 
     //  fetch likes
-    const likes = await getLikes({type, post_id, comment_id }as IFetchLikes);
+    const likes = await getLikes({ type, post_id, comment_id } as IFetchLikes);
 
-   apiResponse.success(res, {
+    apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.LIKE.FETCH_SUCCESS,
       data: { count: likes.length, likes },
     });
   } catch (error: any) {
     console.error(error);
-     apiResponse.error(res, {
+    apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
       message: 'Error fetching likes.',
       data: { error: error.message },
@@ -142,4 +144,4 @@ const fetchLikes = async (req: Request, res: Response) => {
   }
 };
 
-export  {addLike,fetchLikes};
+export { addLike, fetchLikes };

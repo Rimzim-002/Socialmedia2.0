@@ -42,7 +42,6 @@ const Likes = dbconnection.define(
       },
       allowNull: true,
     },
-    
   },
   {
     timestamps: true,

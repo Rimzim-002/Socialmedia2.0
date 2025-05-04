@@ -13,7 +13,7 @@ const createComment = async (attributes: IAddComment) => {
       });
 
       if (!repliedComment) {
-        throw new Error(Messages.COMMENT.REPLY_COMMENT_NOT_FOUND );
+        throw new Error(Messages.COMMENT.REPLY_COMMENT_NOT_FOUND);
       }
     }
 
@@ -21,13 +21,12 @@ const createComment = async (attributes: IAddComment) => {
       post_id,
       user_id,
       content,
-      reply_id:reply_id?reply_id:null 
+      reply_id: reply_id ? reply_id : null,
     });
 
     return newComment;
   } catch (error: unknown) {
-    
-    throw new Error(Messages.COMMENT.ERROR );
+    throw new Error(Messages.COMMENT.ERROR);
   }
 };
 const fetchCommnets = async (post_id: string | number) => {
@@ -54,15 +53,15 @@ const CommentExist = async (id: string | number) => {
 
 const destroyComment = async (id: string | number) => {
   try {
-    const data = await Comments.update({ is_delete: true }, { where: { id} });
+    const data = await Comments.update({ is_delete: true }, { where: { id } });
     return data;
   } catch (error) {
     throw new Error(Messages.COMMENT.NOT_FOUND);
   }
 };
-const updateComment = async ({id, content}: IUpdateComment) => {
+const updateComment = async ({ id, content }: IUpdateComment) => {
   try {
-    const [data] = await Comments.update({content}, { where: { id } });
+    const [data] = await Comments.update({ content }, { where: { id } });
     if (data) {
       const update = await Comments.findOne({ where: { id: id } });
       return update;

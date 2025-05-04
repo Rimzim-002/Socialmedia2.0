@@ -16,11 +16,11 @@ dbconnection
   .catch((err: Error) => {
     console.log(Error, 'unable to  connnect');
   });
- app.use(router);
+app.use(router);
 
 // const PORT = 5000 ;
 // console.log(PORT)
 app.listen(Number(process.env.port), () => {
   console.log(` Express server started   on port ${process.env.port}`);
 });
- export default router
+export default router;

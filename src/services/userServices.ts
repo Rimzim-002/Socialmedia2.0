@@ -13,7 +13,7 @@ const findbyEmail = async (email: string) => {
     throw new Error(Messages.USER.EMAIL_NOT_EXISTS);
   }
 };
-const UserExist = async (id: string | number)=> {
+const UserExist = async (id: string | number) => {
   try {
     const isExist = await Users.findByPk(id);
     return isExist;
@@ -57,9 +57,7 @@ const userlogin = async (attributes: Ilogin) => {
   }
 };
 
-const updateUser = async (
-  attributes: IUserUpdate,
-)=> {
+const updateUser = async (attributes: IUserUpdate) => {
   const { id, updateData } = attributes;
   try {
     const userUpdate = await Users.update(updateData, { where: { id } });

@@ -21,9 +21,9 @@ const Messages = {
     TOKEN_INVALID: 'Invalid or expired token',
     ACCESS_DENIED: 'Access denied! Unauthorized user',
   },
-  LIKE:{
-    ALREADY_LIKE:" you alrady like it ",
-    FETCH_SUCCESS:"fetch success"
+  LIKE: {
+    ALREADY_LIKE: ' you alrady like it ',
+    FETCH_SUCCESS: 'fetch success',
   },
   VALIDATION: {
     REQUIRED_FIELDS: 'Please fill in all required fields',
@@ -53,7 +53,7 @@ const Messages = {
     COMMENT_UPDATE: 'comment update successfully',
     COMMENT_UPD_FAILED: 'comment update  failed',
     COMMENT_DLT_FAILED: 'comment delete  failed',
-    REPLY_COMMENT_NOT_FOUND:'Replied comment not found'
+    REPLY_COMMENT_NOT_FOUND: 'Replied comment not found',
   },
 };
 export default Messages;

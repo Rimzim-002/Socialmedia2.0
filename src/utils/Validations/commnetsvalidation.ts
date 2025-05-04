@@ -13,7 +13,6 @@ export const commentSchema = yup.object().shape({
 export const getAllCommentsSchema = yup.object().shape({
   post_id: yup.string().required('post_id is required'),
   user_id: yup.string().required('user id is required'),
-
 });
 
 export const deleteCommentSchema = yup.object().shape({
@@ -24,7 +23,6 @@ export const deleteCommentSchema = yup.object().shape({
 export const updateCommentSchema = yup.object().shape({
   id: yup.string().required('comment id is required'),
   user_id: yup.string().required('user id is required'),
-
 });
 
 export const getCommentSchema = yup.object().shape({
