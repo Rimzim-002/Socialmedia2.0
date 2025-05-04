@@ -1,69 +1,111 @@
 import { error } from 'console';
 import Posts from '../models/postModel.js';
 import Users from '../models/userModel.js';
+import { Ipost, PostUpdate } from '../utils/interfaces/Ipost.js';
+import Messages from '../utils/messagesManager.js';
 
-const findUSer = async (userID: string|number) => {
-  const isUserExist = await Users.findOne({
-    where: { id: userID },
-  });
-  if (isUserExist) {
-    return isUserExist;
-  } else {
-    throw error;
+const findUSer = async (userID: string | number) => {
+  try {
+    const isUserExist = await Users.findOne({
+      where: { id: userID },
+    });
+
+    if (isUserExist) {
+      return isUserExist;
+    }
+  } catch (error: any) {
+    throw new Error(`Error while finding user: ${error.message}`);
   }
 };
-const postData = async (attributes: any) => {
-  const { user_id, image, caption } = attributes;
-  const createNewPost = await Posts.create({
-    user_id,
-    image,
-    caption,
-  });
-  if (createNewPost) {
-    return createNewPost;
-  } else {
-    throw error;
+
+const postData = async (
+  attributes: Ipost,
+): Promise<InstanceType<typeof Posts>> => {
+  try {
+    const { user_id, image, caption } = attributes;
+    const createNewPost = await Posts.create({
+      user_id,
+      image,
+      caption,
+    });
+
+    return createNewPost.get();
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
-const postExist = async (postId: string) => {
-  const isPostExist = await Posts.findByPk(postId);
-  if (isPostExist) {
-    return isPostExist;
+const postExist = async (postId: string | number) => {
+  try {
+    const isPostExist = await Posts.findByPk(postId);
+    if (isPostExist) {
+      return isPostExist;
+    }
+  } catch (error: any) {
+    throw new Error(`Error while checking post existence: ${error.message}`);
   }
-  throw new Error('Post not found');
-};
-const postAvail = async (postId: string | Number) => {
-  const isPostExist = await Posts.findOne({
-    where: { id: postId, is_delete: false },
-  });
-  if (isPostExist) {
-    return isPostExist;
-  }
-  throw new Error('Post not found');
 };
 
-const postUpdate = async (attributes: any) => {
-  const { id, updateData } = attributes;
+const postAvail = async (postId: string | number) => {
+  try {
+    const isPostExist = await Posts.findOne({
+      where: { id: postId, is_delete: false },
+    });
 
-  const updatedCount = await Posts.update(updateData, { where: { id } });
-
-  if (updatedCount) {
-    const updatedPost = await Posts.findOne({ where: { id } });
-    return updatedPost;
+    if (isPostExist) {
+      return isPostExist;
+    }
+  } catch (error: any) {
+    throw new Error(`Error while checking post availability: ${error.message}`);
   }
-
-  throw new Error('Post not updated');
 };
+
+const postUpdate = async (attributes: PostUpdate) => {
+  try {
+    const { id, updateData } = attributes;
+
+    const [updatedCount] = await Posts.update(updateData, { where: { id } });
+
+    if (updatedCount > 0) {
+      const updatedPost = await Posts.findOne({ where: { id } });
+      return updatedPost;
+    }
+  } catch (error: any) {
+    throw new Error(`Error while updating post: ${error.message}`);
+  }
+};
+
 const postdelete = async (id: string) => {
-  const deletePost = await Posts.update({ is_delete: true }, { where: { id } });
-  return deletePost;
+  try {
+    const [updatedrows] = await Posts.update(
+      { is_delete: true },
+      { where: { id } },
+    );
+
+    if (updatedrows > 0) {
+      return { message: Messages.POST.POST_DELETE_SUCCESS };
+    } else {
+      throw new Error(Messages.POST.POST_CREATED_FAILED);
+    }
+  } catch (error: any) {
+    throw new Error(error.message || Messages.POST.POST_CREATED_FAILED);
+  }
 };
+
 const userposts = async (user_id: string | number) => {
-  const data = await Posts.findAll({
-    where: { user_id: user_id, is_delete: false },
-  });
-  return data;
+  try {
+    const posts = await Posts.findAll({
+      where: {
+        user_id,
+        is_delete: false,
+      },
+    });
+
+    return posts;
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to fetch user posts');
+  }
 };
+
 export {
   findUSer,
   postData,

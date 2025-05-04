@@ -10,14 +10,6 @@ const Likes = dbconnection.define('Likes', {
         primaryKey: true,
         defaultValue: () => nanoid(6),
     },
-    post_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        references: {
-            model: Posts,
-            key: 'id',
-        },
-    },
     user_id: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -30,31 +22,33 @@ const Likes = dbconnection.define('Likes', {
         type: DataTypes.ENUM('post', 'comment'),
         allowNull: false,
     },
+    post_id: {
+        type: DataTypes.STRING,
+        references: {
+            model: Posts,
+            key: 'id',
+        },
+        allowNull: true,
+    },
     Comment_id: {
         type: DataTypes.STRING,
+        references: {
+            model: Comments,
+            key: 'id',
+        },
         allowNull: true,
-        defaultValue: null,
-    },
-    status: {
-        type: DataTypes.ENUM('like', 'dislike'),
-        allowNull: true,
-        defaultValue: null,
-    },
-    is_delete: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
     },
 }, {
     timestamps: true,
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
 });
-Posts.hasMany(Likes, { foreignKey: 'post_id', as: 'likes' });
-Likes.belongsTo(Posts, { foreignKey: 'post_id', as: 'posts' });
 Users.hasMany(Likes, { foreignKey: 'user_id', as: 'likes' });
 Likes.belongsTo(Users, { foreignKey: 'user_id', as: 'user' });
-Comments.hasMany(Likes, { foreignKey: 'comment_id', as: 'like' });
-Likes.belongsTo(Comments, { foreignKey: 'comment_id', as: 'user' });
+Posts.hasMany(Likes, { foreignKey: 'post_id', as: 'likes' });
+Likes.belongsTo(Posts, { foreignKey: 'post_id', as: 'post' });
+Comments.hasMany(Likes, { foreignKey: 'Comment_id', as: 'likes' });
+Likes.belongsTo(Comments, { foreignKey: 'Comment_id', as: 'comment' });
 Likes.sync()
     .then(() => {
     console.log('Comments table created successfully');

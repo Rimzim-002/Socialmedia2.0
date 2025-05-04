@@ -1,22 +1,27 @@
 import Users from '../models/userModel.js';
 import bcrypt from 'bcrypt';
+import { Ilogin, IUser, IUserUpdate } from '../utils/interfaces/IUser.js';
+import Messages from '../utils/messagesManager.js';
 
-const findbyEmail = async (email: string) => {
+const findbyEmail = async (email: string): Promise<IUser | null> => {
   try {
     const isUserExist = await Users.findOne({
       where: { email },
     });
-    return isUserExist;
+    return isUserExist as IUser | null;
   } catch (error) {
-    console.error('Error in findbyEmail:', error);
-    throw error;
+    throw new Error(Messages.USER.EMAIL_NOT_EXISTS);
   }
 };
-const UserExist = async (id: string | number) => {
-  const isExist = await Users.findByPk(id);
-  return isExist;
+const UserExist = async (id: string | number): Promise<any> => {
+  try {
+    const isExist = await Users.findByPk(id);
+    return isExist;
+  } catch (error) {
+    throw new Error(Messages.USER.USER_NOT_EXIST);
+  }
 };
-const newUser = async (attributes: any) => {
+const newUser = async (attributes: IUser): Promise<IUser | null> => {
   const { name, email, password } = attributes;
   try {
     const hashPassword = await bcrypt.hash(password, 8);
@@ -25,36 +30,48 @@ const newUser = async (attributes: any) => {
       email,
       password: hashPassword,
     });
-    return user;
+    return user.get() as IUser | null;
   } catch (error: any) {
-    console.error('Error in newUser:', error);
     throw new Error(error);
   }
 };
-const userlogin = async (attributes: any) => {
+const userlogin = async (attributes: Ilogin): Promise<IUser | null> => {
   const { email, password } = attributes;
   try {
     const isUserExist = await Users.findOne({ where: { email } });
-    if (isUserExist) {
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        isUserExist?.dataValues?.password,
-      );
-      if (isPasswordValid) {
-        return isUserExist;
-      }
+    if (!isUserExist) {
+      throw new Error(Messages.USER.USER_NOT_EXIST);
     }
-  } catch (error) {
-    console.error('Error in findbyEmail:', error);
-  }
-};
-const updateUser = async (attributes: any) => {
-  const { id, updateData } = attributes;
-  const userUpdate = await Users.update(updateData, { where: { id } });
 
-  if (userUpdate) {
-    const data = await Users.findOne({ where: { id } });
-    return data;
+    // Validate the password
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      isUserExist?.dataValues?.password,
+    );
+    if (!isPasswordValid) {
+      throw new Error(Messages.VALIDATION.INVALID_INPUT);
+    }
+    return isUserExist.get() as IUser;
+  } catch (error) {
+    throw new Error(Messages.SYSTEM.SERVER_ERROR);
   }
 };
+
+const updateUser = async (
+  attributes: IUserUpdate,
+): Promise<IUserUpdate | null> => {
+  const { id, updateData } = attributes;
+  try {
+    const userUpdate = await Users.update(updateData, { where: { id } });
+
+    if (userUpdate) {
+      const data = await Users.findOne({ where: { id } });
+      return data ? (data.toJSON() as IUserUpdate) : null;
+    }
+    throw new Error('User update failed');
+  } catch (error) {
+    throw new Error('Error occurred while updating user');
+  }
+};
+
 export { findbyEmail, newUser, userlogin, UserExist, updateUser };

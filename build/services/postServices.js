@@ -1,64 +1,96 @@
-import { error } from 'console';
 import Posts from '../models/postModel.js';
 import Users from '../models/userModel.js';
+import Messages from '../utils/messagesManager.js';
 const findUSer = async (userID) => {
-    const isUserExist = await Users.findOne({
-        where: { id: userID },
-    });
-    if (isUserExist) {
-        return isUserExist;
+    try {
+        const isUserExist = await Users.findOne({
+            where: { id: userID },
+        });
+        if (isUserExist) {
+            return isUserExist;
+        }
     }
-    else {
-        throw error;
+    catch (error) {
+        throw new Error(`Error while finding user: ${error.message}`);
     }
 };
 const postData = async (attributes) => {
-    const { user_id, image, caption } = attributes;
-    const createNewPost = await Posts.create({
-        user_id,
-        image,
-        caption,
-    });
-    if (createNewPost) {
-        return createNewPost;
+    try {
+        const { user_id, image, caption } = attributes;
+        const createNewPost = await Posts.create({
+            user_id,
+            image,
+            caption,
+        });
+        return createNewPost.get();
     }
-    else {
-        throw error;
+    catch (error) {
+        throw new Error(error);
     }
 };
 const postExist = async (postId) => {
-    const isPostExist = await Posts.findByPk(postId);
-    if (isPostExist) {
-        return isPostExist;
+    try {
+        const isPostExist = await Posts.findByPk(postId);
+        if (isPostExist) {
+            return isPostExist;
+        }
     }
-    throw new Error('Post not found');
+    catch (error) {
+        throw new Error(`Error while checking post existence: ${error.message}`);
+    }
 };
 const postAvail = async (postId) => {
-    const isPostExist = await Posts.findOne({
-        where: { id: postId, is_delete: false },
-    });
-    if (isPostExist) {
-        return isPostExist;
+    try {
+        const isPostExist = await Posts.findOne({
+            where: { id: postId, is_delete: false },
+        });
+        if (isPostExist) {
+            return isPostExist;
+        }
     }
-    throw new Error('Post not found');
+    catch (error) {
+        throw new Error(`Error while checking post availability: ${error.message}`);
+    }
 };
 const postUpdate = async (attributes) => {
-    const { id, updateData } = attributes;
-    const updatedCount = await Posts.update(updateData, { where: { id } });
-    if (updatedCount) {
-        const updatedPost = await Posts.findOne({ where: { id } });
-        return updatedPost;
+    try {
+        const { id, updateData } = attributes;
+        const [updatedCount] = await Posts.update(updateData, { where: { id } });
+        if (updatedCount > 0) {
+            const updatedPost = await Posts.findOne({ where: { id } });
+            return updatedPost;
+        }
     }
-    throw new Error('Post not updated');
+    catch (error) {
+        throw new Error(`Error while updating post: ${error.message}`);
+    }
 };
 const postdelete = async (id) => {
-    const deletePost = await Posts.update({ is_delete: true }, { where: { id } });
-    return deletePost;
+    try {
+        const [updatedrows] = await Posts.update({ is_delete: true }, { where: { id } });
+        if (updatedrows > 0) {
+            return { message: Messages.POST.POST_DELETE_SUCCESS };
+        }
+        else {
+            throw new Error(Messages.POST.POST_CREATED_FAILED);
+        }
+    }
+    catch (error) {
+        throw new Error(error.message || Messages.POST.POST_CREATED_FAILED);
+    }
 };
 const userposts = async (user_id) => {
-    const data = await Posts.findAll({
-        where: { user_id: user_id, is_delete: false },
-    });
-    return data;
+    try {
+        const posts = await Posts.findAll({
+            where: {
+                user_id,
+                is_delete: false,
+            },
+        });
+        return posts;
+    }
+    catch (error) {
+        throw new Error(error.message || 'Failed to fetch user posts');
+    }
 };
 export { findUSer, postData, postExist, postUpdate, postdelete, userposts, postAvail, };

@@ -5,6 +5,7 @@ const Messages = {
     SIGNUP_SUCCESS: 'User registered successfully',
     SIGNUP_FAILED: 'User registration failed',
     EMAIL_EXISTS: 'Email already in use',
+    EMAIL_NOT_EXISTS: 'Email not exist',
     INVALID_EMAIL: 'Invalid email format',
     PASSWORD_REQUIRED: 'Password is required',
     PASSWORD_WEAK: 'Password must be at least 8 characters long',
@@ -19,6 +20,10 @@ const Messages = {
     TOKEN_MISSING: 'Authorization token is missing',
     TOKEN_INVALID: 'Invalid or expired token',
     ACCESS_DENIED: 'Access denied! Unauthorized user',
+  },
+  LIKE:{
+    ALREADY_LIKE:" you alrady like it ",
+    FETCH_SUCCESS:"fetch success"
   },
   VALIDATION: {
     REQUIRED_FIELDS: 'Please fill in all required fields',
@@ -48,6 +53,7 @@ const Messages = {
     COMMENT_UPDATE: 'comment update successfully',
     COMMENT_UPD_FAILED: 'comment update  failed',
     COMMENT_DLT_FAILED: 'comment delete  failed',
+    REPLY_COMMENT_NOT_FOUND:'Replied comment not found'
   },
 };
 export default Messages;

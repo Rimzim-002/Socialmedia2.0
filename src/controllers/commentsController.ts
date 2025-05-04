@@ -8,25 +8,23 @@ import {
   fetchCommnets,
   updateComment,
 } from '../services/commentServices.js';
+import{commentSchema,
+  getAllCommentsSchema,
+  deleteCommentSchema,
+  updateCommentSchema,
+  getCommentSchema} from "../utils/Validations/commnetsvalidation.js"
 import apiResponse from '../utils/apiResponse.js';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import Messages from '../utils/messagesManager.js';
-
+import { IAddComment, IDeleteComment, IGetComments, IGetSingleComment, IUpdateComment } from '../utils/interfaces/Icomment.js';
+// add comment
 const addComment = async (req: Request, res: Response) => {
-  const { post_id, user_id, content, reply_id } = req.body;
-  const commentSchema = yup.object().shape({
-    post_id: yup.string().required('post_id is required'),
-    user_id: yup.string().required('user_id is required'),
-    reply_id: yup.string().nullable(),
-    content: yup
-      .string()
-      .min(1, 'minimum one character is needed')
-      .required('comment is required'),
-  });
+  const { post_id, user_id, content, reply_id } = req.body as IAddComment;
+
 
   try {
-    await commentSchema.validate(req.body);
-    const isUserExist = await findUSer(user_id);
+    await commentSchema.validate(req.body);// validation
+    const isUserExist = await findUSer(user_id);// check user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -34,7 +32,7 @@ const addComment = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isPostExist = await postExist(post_id);
+    const isPostExist = await postExist(post_id);// check  post exist 
     if (!isPostExist) {
       apiResponse.error(res, {
         status: ResponseCode.NOT_FOUND,
@@ -43,9 +41,9 @@ const addComment = async (req: Request, res: Response) => {
       });
     }
 
-    const postdata = { post_id, user_id, content, reply_id };
+   
 
-    const newComment = await createComment(postdata);
+    const newComment  = await createComment(req.body); // create commnet
 
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
@@ -53,21 +51,34 @@ const addComment = async (req: Request, res: Response) => {
       data: { newComment },
     });
   } catch (error: any) {
+    // Handling  the validation errors centrally
+    if (error instanceof yup.ValidationError) {
+      const simplifiedErrors = error.inner.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      apiResponse.error(res, {
+        status: 400,
+        message: 'Validation failed',
+        data: simplifiedErrors,
+      });
+    }
+    // Handling the  validation errors on server
+
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: Messages.POST.POST_NOT_FOUND,
-      data: { error },
+      message: Messages.POST.POST_DELETE_FAIL,
+      data: { error: error.message },
     });
   }
 };
 const getAllcomments = async (req: Request, res: Response) => {
-  const { post_id ,user_id} = req.body;
-  const commentSchema = yup.object().shape({
-    post_id: yup.string().required('post_id is required'),
-  });
+  const { post_id, user_id } = req.body as IGetComments;
+  
   try {
-    await commentSchema.validate(req.body, { abortEarly: false });
-    const isUserExist = await findUSer(user_id);
+    await getAllCommentsSchema.validate(req.body, { abortEarly: false });//validation
+    const isUserExist = await findUSer(user_id);// check user  exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -75,7 +86,7 @@ const getAllcomments = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isPostExist = await postExist(post_id);
+    const isPostExist = await postExist(post_id);// checks  post   exist
     if (!isPostExist) {
       apiResponse.error(res, {
         status: ResponseCode.NOT_FOUND,
@@ -83,28 +94,41 @@ const getAllcomments = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const getComments = await fetchCommnets(post_id);
+    const getComments = await fetchCommnets(post_id);// fetch comments 
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.POST.POST_FOUND,
       data: getComments,
     });
-  } catch (error) {
+  } catch (error: any) {
+    // Handling  the validation errors centrally
+    if (error instanceof yup.ValidationError) {
+      const simplifiedErrors = error.inner.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      apiResponse.error(res, {
+        status: 400,
+        message: 'Validation failed',
+        data: simplifiedErrors,
+      });
+    }
+    // Handling the  validation errors on server
+
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: Messages.SYSTEM.SERVER_ERROR,
-      data: {},
+      message: Messages.POST.POST_DELETE_FAIL,
+      data: { error: error.message },
     });
   }
 };
 const deletecommnet = async (req: Request, res: Response) => {
-  const { id ,user_id} = req.body;
-  const dltSchema = yup.object({
-    id: yup.string().required('delete id is required').required(),
-  });
+  const { id, user_id } = req.body as IDeleteComment;
+  
   try {
-    await dltSchema.validate(req.body, { abortEarly: false });
-    const isUserExist = await findUSer(user_id);
+    await deleteCommentSchema.validate(req.body, { abortEarly: false });
+    const isUserExist = await findUSer(user_id);//  check userexist 
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -112,67 +136,105 @@ const deletecommnet = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    const isCommentexist = await CommentExist(id);
+    const isCommentexist = await CommentExist(id); // cjecks commnets exist
     if (!isCommentexist) {
       res
         .status(ResponseCode.FORBIDDEN)
         .json({ Messages: Messages.COMMENT.NOT_FOUND });
     }
 
-    const deleteComment = await destroyComment(id);
+    const deleteComment = await destroyComment(id);// delete the comment
     res
       .status(ResponseCode.SUCCESS)
       .json({ Messages: Messages.COMMENT.COMMENT_DELETE, data: {} });
-  } catch (error) {
-    res
-      .status(ResponseCode.SYSTEM)
-      .json({ message: Messages.COMMENT.COMMENT_DLT_FAILED });
+  } catch (error: any) {
+    // Handling  the validation errors centrally
+    if (error instanceof yup.ValidationError) {
+      const simplifiedErrors = error.inner.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      apiResponse.error(res, {
+        status: 400,
+        message: 'Validation failed',
+        data: simplifiedErrors,
+      });
+    }
+    // Handling the  validation errors on server
+
+    apiResponse.error(res, {
+      status: ResponseCode.SYSTEM,
+      message: Messages.POST.POST_DELETE_FAIL,
+      data: { error: error.message },
+    });
   }
 };
 const updatecomment = async (req: Request, res: Response) => {
-  const {user_id, id, ...updatedata } = req.body;
-  const SignuSchema = yup.object({
-    id: yup.string().required('commnet id is required').required(),
-  });
-  try {
-    await SignuSchema.validate(req.body, { abortEarly: false });
+  const { user_id, id, content } = req.body as IUpdateComment;
+  // if (!user_id) {
+  //    apiResponse.error(res, {
+  //     status: ResponseCode.BAD_REQUEST,
+  //     message: Messages.USER.USER_NOT_EXIST,
+  //     data: {},
+  //   });
+  // }
 
-    const isCommentexist = await CommentExist(id);
-    const isUserExist = await findUSer(user_id);
-    if (!isUserExist) {
+  try {
+    await updateCommentSchema.validate(req.body, { abortEarly: false });
+
+    const isCommentexist = await CommentExist(id);// checks comment exist
+    // const isUserExist = await findUSer(user_id);// checks is user exist
+    if (!isCommentexist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
-        message: Messages.USER.USER_NOT_EXIST,
+        message: Messages.COMMENT.NOT_FOUND,
         data: {},
       });
     }
-    if (!isCommentexist) {
-      res
-        .status(ResponseCode.FORBIDDEN)
-        .json({ Messages: Messages.COMMENT.NOT_FOUND });
-    }
-    const updateData = { id, updatedata };
+    // if (!isUserExist) {
+    //   apiResponse.error(res, {
+    //     status: ResponseCode.BAD_REQUEST,
+    //     message: Messages.USER.USER_NOT_EXIST,
+    //     data: {},
+    //   });
+    // }
+    const updateData: IUpdateComment = { id, content }; // ✅ CORRECT
+
     const updatedComment = await updateComment(updateData);
     res.status(ResponseCode.SUCCESS).json({
       Messages: Messages.USER.SIGNUP_SUCCESS,
       data: { updatedComment },
     });
-  } catch (error) {
+  } catch (error: any) {
+    // Handling  the validation errors centrally
+    if (error instanceof yup.ValidationError) {
+      const simplifiedErrors = error.inner.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      apiResponse.error(res, {
+        status: 400,
+        message: 'Validation failed',
+        data: simplifiedErrors,
+      });
+    }
+    // Handling the  validation errors on server
+
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: Messages.COMMENT.COMMENT_UPD_FAILED,
-      data: { error },
+      message: Messages.POST.POST_DELETE_FAIL,
+      data: { error: error.message },
     });
   }
 };
 const getComment = async (req: Request, res: Response) => {
-  const { id ,user_id} = req.body;
-  const SignuSchema = yup.object({
-    id: yup.string().required('commnet id is required').required(),
-  });
+  const { id, user_id } = req.body as IGetSingleComment;
+
   try {
-    await SignuSchema.validate(req.body, { abortEarly: false });
-    const isUserExist = await findUSer(user_id);
+    await getCommentSchema.validate(req.body, { abortEarly: false });// validation
+    const isUserExist = await findUSer(user_id);// check user exist
     if (!isUserExist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -182,19 +244,38 @@ const getComment = async (req: Request, res: Response) => {
     }
     const isCommentexist = await CommentExist(id);
     if (!isCommentexist) {
-      res
-        .status(ResponseCode.FORBIDDEN)
-        .json({ Messages: Messages.COMMENT.NOT_FOUND });
+      apiResponse.error(res, {
+        status: ResponseCode.BAD_REQUEST,
+        message: Messages.COMMENT.NOT_FOUND,
+        data: {},
+      });
     }
 
-    res
-      .status(ResponseCode.SUCCESS)
-      .json({ Messages: Messages.COMMENT.SUCESS, data: { isCommentexist } });
-  } catch (error) {
+    apiResponse.success(res, {
+      status: ResponseCode.SUCCESS,
+      message: Messages.COMMENT.FETCH_SUCCESS,
+      data: {isCommentexist},
+    });
+  } catch (error: any) {
+    // Handling  the validation errors centrally
+    if (error instanceof yup.ValidationError) {
+      const simplifiedErrors = error.inner.map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      apiResponse.error(res, {
+        status: 400,
+        message: 'Validation failed',
+        data: simplifiedErrors,
+      });
+    }
+    // Handling the  validation errors on server
+
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: Messages.COMMENT.COMMENT_DLT_FAILED,
-      data: { error },
+      message: Messages.POST.POST_DELETE_FAIL,
+      data: { error: error.message },
     });
   }
 };

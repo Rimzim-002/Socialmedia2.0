@@ -1,5 +1,6 @@
 import Users from '../models/userModel.js';
 import bcrypt from 'bcrypt';
+import Messages from '../utils/messagesManager.js';
 const findbyEmail = async (email) => {
     try {
         const isUserExist = await Users.findOne({
@@ -8,13 +9,17 @@ const findbyEmail = async (email) => {
         return isUserExist;
     }
     catch (error) {
-        console.error('Error in findbyEmail:', error);
-        throw error;
+        throw new Error(Messages.USER.EMAIL_NOT_EXISTS);
     }
 };
 const UserExist = async (id) => {
-    const isExist = await Users.findByPk(id);
-    return isExist;
+    try {
+        const isExist = await Users.findByPk(id);
+        return isExist;
+    }
+    catch (error) {
+        throw new Error(Messages.USER.USER_NOT_EXIST);
+    }
 };
 const newUser = async (attributes) => {
     const { name, email, password } = attributes;
@@ -25,10 +30,9 @@ const newUser = async (attributes) => {
             email,
             password: hashPassword,
         });
-        return user;
+        return user.get();
     }
     catch (error) {
-        console.error('Error in newUser:', error);
         throw new Error(error);
     }
 };
@@ -36,23 +40,32 @@ const userlogin = async (attributes) => {
     const { email, password } = attributes;
     try {
         const isUserExist = await Users.findOne({ where: { email } });
-        if (isUserExist) {
-            const isPasswordValid = await bcrypt.compare(password, isUserExist?.dataValues?.password);
-            if (isPasswordValid) {
-                return isUserExist;
-            }
+        if (!isUserExist) {
+            throw new Error(Messages.USER.USER_NOT_EXIST);
         }
+        // Validate the password
+        const isPasswordValid = await bcrypt.compare(password, isUserExist?.dataValues?.password);
+        if (!isPasswordValid) {
+            throw new Error(Messages.VALIDATION.INVALID_INPUT);
+        }
+        return isUserExist.get();
     }
     catch (error) {
-        console.error('Error in findbyEmail:', error);
+        throw new Error(Messages.SYSTEM.SERVER_ERROR);
     }
 };
 const updateUser = async (attributes) => {
     const { id, updateData } = attributes;
-    const userUpdate = await Users.update(updateData, { where: { id } });
-    if (userUpdate) {
-        const data = await Users.findOne({ where: { id } });
-        return data;
+    try {
+        const userUpdate = await Users.update(updateData, { where: { id } });
+        if (userUpdate) {
+            const data = await Users.findOne({ where: { id } });
+            return data ? data.toJSON() : null;
+        }
+        throw new Error('User update failed');
+    }
+    catch (error) {
+        throw new Error('Error occurred while updating user');
     }
 };
 export { findbyEmail, newUser, userlogin, UserExist, updateUser };

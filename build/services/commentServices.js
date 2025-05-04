@@ -3,18 +3,20 @@ import Messages from '../utils/messagesManager.js';
 const createComment = async (attributes) => {
     const { post_id, user_id, content, reply_id } = attributes;
     try {
-        if (reply_id !== 0) {
-            const repliedcomment = await Comments.findOne({
+        // checks comment exis
+        if (reply_id !== null) {
+            const repliedComment = await Comments.findOne({
                 where: { id: reply_id },
             });
-            if (!repliedcomment) {
+            if (!repliedComment) {
+                throw new Error(Messages.COMMENT.REPLY_COMMENT_NOT_FOUND);
             }
         }
         const newComment = await Comments.create({
             post_id,
             user_id,
             content,
-            reply_id: reply_id ? reply_id : null,
+            reply_id: reply_id ? reply_id : null
         });
         return newComment;
     }
@@ -54,10 +56,9 @@ const destroyComment = async (id) => {
         throw new Error(Messages.COMMENT.NOT_FOUND);
     }
 };
-const updateComment = async (attributes) => {
-    const { id, updatedata } = attributes;
+const updateComment = async ({ id, content }) => {
     try {
-        const data = await Comments.update(updatedata, { where: { id } });
+        const [data] = await Comments.update({ content }, { where: { id } });
         if (data) {
             const update = await Comments.findOne({ where: { id: id } });
             return update;

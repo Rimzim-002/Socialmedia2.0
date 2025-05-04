@@ -1,15 +1,19 @@
 import Comments from '../models/commentsModel.js';
 import Posts from '../models/postModel.js';
+import { IAddComment, IUpdateComment } from '../utils/interfaces/Icomment.js';
 import Messages from '../utils/messagesManager.js';
 
-const createComment = async (attributes: any) => {
+const createComment = async (attributes: IAddComment) => {
   const { post_id, user_id, content, reply_id } = attributes;
   try {
-    if (reply_id !== 0) {
-      const repliedcomment = await Comments.findOne({
+    // checks comment exis
+    if (reply_id !== null) {
+      const repliedComment = await Comments.findOne({
         where: { id: reply_id },
       });
-      if (!repliedcomment) {
+
+      if (!repliedComment) {
+        throw new Error(Messages.COMMENT.REPLY_COMMENT_NOT_FOUND );
       }
     }
 
@@ -17,12 +21,13 @@ const createComment = async (attributes: any) => {
       post_id,
       user_id,
       content,
-      reply_id: reply_id ? reply_id : null,
+      reply_id:reply_id?reply_id:null 
     });
 
     return newComment;
-  } catch (error) {
-    throw new Error(Messages.COMMENT.ERROR);
+  } catch (error: unknown) {
+    
+    throw new Error(Messages.COMMENT.ERROR );
   }
 };
 const fetchCommnets = async (post_id: string | number) => {
@@ -49,16 +54,15 @@ const CommentExist = async (id: string | number) => {
 
 const destroyComment = async (id: string | number) => {
   try {
-    const data = await Comments.update({ is_delete: true }, { where: { id } });
+    const data = await Comments.update({ is_delete: true }, { where: { id} });
     return data;
   } catch (error) {
     throw new Error(Messages.COMMENT.NOT_FOUND);
   }
 };
-const updateComment = async (attributes: any) => {
-  const { id, updatedata } = attributes;
+const updateComment = async ({id, content}: IUpdateComment) => {
   try {
-    const data = await Comments.update(updatedata, { where: { id } });
+    const [data] = await Comments.update({content}, { where: { id } });
     if (data) {
       const update = await Comments.findOne({ where: { id: id } });
       return update;

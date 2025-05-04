@@ -3,18 +3,13 @@ import yup from 'yup';
 import { ResponseCode } from '../utils/Enums/responseCode.js';
 import Messages from '../utils/messagesManager.js';
 import apiResponse from '../utils/apiResponse.js';
+import { validateRequest } from '../utils/validateRequest.js';
+import { addPostSchema, updatePostSchema, deletePostSchema, singlePostSchema, userPostsSchema, } from '../utils/Validations/postValidationschemas.js';
+// Add post
 const addPost = async (req, res) => {
     const { user_id, image, caption } = req.body;
-    const addPostSchema = yup.object().shape({
-        image: yup.string().required('Image is required'),
-        caption: yup
-            .string()
-            .required('Caption is required')
-            .min(20, 'Caption must be at least 2 characters'),
-        user_id: yup.string().required(`UserID is required`),
-    });
     try {
-        await addPostSchema.validate(req.body, { abortEarly: false });
+        await validateRequest(addPostSchema, req.body); // validaion
         // Check if user exist
         const isUserExist = await findUSer(user_id);
         if (!isUserExist) {
@@ -25,7 +20,7 @@ const addPost = async (req, res) => {
             });
         }
         const data = { user_id, image, caption };
-        const createPost = await postData(data);
+        const createPost = await postData(data); // creating post
         apiResponse.success(res, {
             status: ResponseCode.SUCCESS,
             message: Messages.POST.POST_CREATED_SUCESS,
@@ -33,67 +28,32 @@ const addPost = async (req, res) => {
         });
     }
     catch (error) {
+        // Handling  the validation errors centrally
+        if (error instanceof yup.ValidationError) {
+            const simplifiedErrors = error.inner.map((err) => ({
+                field: err.path,
+                message: err.message,
+            }));
+            apiResponse.error(res, {
+                status: 400,
+                message: 'Validation failed',
+                data: simplifiedErrors,
+            });
+        }
+        // Handling the  validation errors on server
         apiResponse.error(res, {
             status: ResponseCode.SYSTEM,
             message: Messages.POST.POST_CREATED_FAILED,
-            data: { error },
+            data: { error: error.message },
         });
     }
 };
+// Update post
 const upatePost = async (req, res) => {
-    const { id, ...updateFields } = req.body;
+    const { user_id, id, ...updateFields } = req.body;
     try {
-        const isPostExist = await postExist(id);
-        if (!isPostExist) {
-            apiResponse.error(res, {
-                status: ResponseCode.BAD_REQUEST,
-                message: Messages.POST.POST_NOT_FOUND,
-                data: {},
-            });
-        }
-        const updatedPost = await postUpdate({ id, updateData: updateFields });
-        apiResponse.success(res, {
-            status: ResponseCode.SUCCESS,
-            message: Messages.POST.POST_UPDATED_SUCCESS,
-            data: { updatedPost },
-        });
-    }
-    catch (error) {
-        apiResponse.error(res, {
-            status: ResponseCode.SYSTEM,
-            message: Messages.POST.POST_UPDATED_FAIL,
-            data: { error },
-        });
-    }
-};
-const deletePost = async (req, res) => {
-    const { id } = req.body;
-    try {
-        const isPostExist = await postExist(id);
-        if (!isPostExist) {
-            res.status(ResponseCode.BAD_REQUEST).json({
-                status: ResponseCode.BAD_REQUEST,
-                Messages: Messages.USER.POST_NOT_FOUND,
-            });
-        }
-        const deletedPost = await postdelete(id);
-        apiResponse.success(res, {
-            status: ResponseCode.SUCCESS,
-            message: Messages.POST.POST_DELETE_SUCCESS,
-            data: {},
-        });
-    }
-    catch (error) {
-        apiResponse.error(res, {
-            status: ResponseCode.SYSTEM,
-            message: Messages.POST.POST_DELETE_FAIL,
-            data: { error },
-        });
-    }
-};
-const allPosts = async (req, res) => {
-    const { user_id } = req.body;
-    try {
+        await validateRequest(updatePostSchema, req.body); // validation
+        // check user exist
         const isUserExist = await findUSer(user_id);
         if (!isUserExist) {
             apiResponse.error(res, {
@@ -102,7 +62,110 @@ const allPosts = async (req, res) => {
                 data: {},
             });
         }
-        const userAllPosts = await userposts(user_id);
+        // check post exist
+        const isPostExist = await postExist(id);
+        if (!isPostExist) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: Messages.POST.POST_NOT_FOUND,
+                data: {},
+            });
+        }
+        const updatedPost = await postUpdate({
+            id,
+            user_id,
+            updateData: updateFields
+        });
+        // upate the post
+        apiResponse.success(res, {
+            status: ResponseCode.SUCCESS,
+            message: Messages.POST.POST_UPDATED_SUCCESS,
+            data: { updatedPost },
+        });
+    }
+    catch (error) {
+        // Handling  the validation errors centrally
+        if (error instanceof yup.ValidationError) {
+            const simplifiedErrors = error.inner.map((err) => ({
+                field: err.path,
+                message: err.message,
+            }));
+            apiResponse.error(res, {
+                status: 400,
+                message: 'Validation failed',
+                data: simplifiedErrors,
+            });
+        }
+        // Handling the  validation errors on server
+        apiResponse.error(res, {
+            status: ResponseCode.SYSTEM,
+            message: Messages.POST.POST_UPDATED_FAIL,
+            data: { error: error.message },
+        });
+    }
+};
+// Delete the pot
+const deletePost = async (req, res) => {
+    const { id, user_id } = req.body;
+    try {
+        await validateRequest(deletePostSchema, req.body); // validation
+        const isUserExist = await findUSer(user_id); // user exist
+        if (!isUserExist) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: Messages.USER.USER_NOT_EXIST,
+                data: {},
+            });
+        }
+        const isPostExist = await postExist(id); // post exist
+        if (!isPostExist) {
+            res.status(ResponseCode.BAD_REQUEST).json({
+                status: ResponseCode.BAD_REQUEST,
+                Messages: Messages.USER.POST_NOT_FOUND,
+            });
+        }
+        const deletedPost = await postdelete(id); // delete post
+        apiResponse.success(res, {
+            status: ResponseCode.SUCCESS,
+            message: Messages.POST.POST_DELETE_SUCCESS,
+            data: {},
+        });
+    }
+    catch (error) {
+        // Handling  the validation errors centrally
+        if (error instanceof yup.ValidationError) {
+            const simplifiedErrors = error.inner.map((err) => ({
+                field: err.path,
+                message: err.message,
+            }));
+            apiResponse.error(res, {
+                status: 400,
+                message: 'Validation failed',
+                data: simplifiedErrors,
+            });
+        }
+        // Handling the  validation errors on server
+        apiResponse.error(res, {
+            status: ResponseCode.SYSTEM,
+            message: Messages.POST.POST_DELETE_FAIL,
+            data: { error: error.message },
+        });
+    }
+};
+// user's all posts
+const allPosts = async (req, res) => {
+    const { user_id } = req.body;
+    try {
+        await validateRequest(userPostsSchema, req.body);
+        const isUserExist = await findUSer(user_id); // validation
+        if (!isUserExist) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: Messages.USER.USER_NOT_EXIST,
+                data: {},
+            });
+        }
+        const userAllPosts = await userposts(user_id); // fetch  users all  posts
         if (userAllPosts) {
             apiResponse.success(res, {
                 status: ResponseCode.SUCCESS,
@@ -112,16 +175,31 @@ const allPosts = async (req, res) => {
         }
     }
     catch (error) {
+        // Handling  the validation errors centrally
+        if (error instanceof yup.ValidationError) {
+            const simplifiedErrors = error.inner.map((err) => ({
+                field: err.path,
+                message: err.message,
+            }));
+            apiResponse.error(res, {
+                status: 400,
+                message: 'Validation failed',
+                data: simplifiedErrors,
+            });
+        }
+        // Handling the  validation errors on server
         apiResponse.error(res, {
             status: ResponseCode.SYSTEM,
-            message: Messages.POST.POST_NOT_FOUND,
-            data: { error },
+            message: Messages.SYSTEM.SERVER_ERROR,
+            data: { error: error.message },
         });
     }
 };
+//single  post
 const userPost = async (req, res) => {
     const { user_id, id } = req.body;
     try {
+        await validateRequest(singlePostSchema, req.body); // validation
         const isUserExist = await findUSer(user_id);
         if (!isUserExist) {
             apiResponse.error(res, {
@@ -130,7 +208,7 @@ const userPost = async (req, res) => {
                 data: {},
             });
         }
-        const userPost = await postAvail(id);
+        const userPost = await postAvail(id); //single post
         if (userPost) {
             apiResponse.success(res, {
                 status: ResponseCode.SUCCESS,
@@ -140,10 +218,23 @@ const userPost = async (req, res) => {
         }
     }
     catch (error) {
+        // Handling  the validation errors centrally
+        if (error instanceof yup.ValidationError) {
+            const simplifiedErrors = error.inner.map((err) => ({
+                field: err.path,
+                message: err.message,
+            }));
+            apiResponse.error(res, {
+                status: 400,
+                message: 'Validation failed',
+                data: simplifiedErrors,
+            });
+        }
+        // Handling the  validation errors on server
         apiResponse.error(res, {
             status: ResponseCode.SYSTEM,
-            message: Messages.POST.POST_NOT_FOUND,
-            data: { error },
+            message: Messages.SYSTEM.SERVER_ERROR,
+            data: { error: error.message },
         });
     }
 };

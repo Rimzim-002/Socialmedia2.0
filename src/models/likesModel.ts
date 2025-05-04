@@ -12,7 +12,6 @@ const Likes = dbconnection.define(
       primaryKey: true,
       defaultValue: () => nanoid(6),
     },
-  
 
     user_id: {
       type: DataTypes.STRING,
@@ -27,21 +26,23 @@ const Likes = dbconnection.define(
       allowNull: false,
     },
 
-    parent_id: {
+    post_id: {
       type: DataTypes.STRING,
-      allowNull: false,
-      
-    },
-
-    status: {
-      type: DataTypes.ENUM('like', 'dislike'),
+      references: {
+        model: Posts,
+        key: 'id',
+      },
       allowNull: true,
-      defaultValue: null,
     },
-    is_delete: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    Comment_id: {
+      type: DataTypes.STRING,
+      references: {
+        model: Comments,
+        key: 'id',
+      },
+      allowNull: true,
     },
+    
   },
   {
     timestamps: true,
@@ -50,10 +51,14 @@ const Likes = dbconnection.define(
   },
 );
 
-
 Users.hasMany(Likes, { foreignKey: 'user_id', as: 'likes' });
 Likes.belongsTo(Users, { foreignKey: 'user_id', as: 'user' });
 
+Posts.hasMany(Likes, { foreignKey: 'post_id', as: 'likes' });
+Likes.belongsTo(Posts, { foreignKey: 'post_id', as: 'post' });
+
+Comments.hasMany(Likes, { foreignKey: 'Comment_id', as: 'likes' });
+Likes.belongsTo(Comments, { foreignKey: 'Comment_id', as: 'comment' });
 
 Likes.sync()
   .then(() => {
