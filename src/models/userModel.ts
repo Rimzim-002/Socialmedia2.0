@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import {dbconnection} from '../config/dbconnection.js';
+import { dbconnection } from '../config/dbconnection.js';
 import { nanoid } from 'nanoid';
 const Users = dbconnection.define(
   'users',

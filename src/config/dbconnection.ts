@@ -9,15 +9,14 @@ const dbconnection = new Sequelize(
     host: process.env.DATABASE_HOST as string,
     dialect: 'mysql',
   },
-  
 );
 const connectToDB = async () => {
   try {
     await dbconnection.authenticate();
     console.log(' Database connection successful');
   } catch (error) {
-    console.error('Unable to connect to the database:',error);
+    console.error('Unable to connect to the database:', error);
     process.exit(1); // Exit if DB connection fails
   }
 };
-export  {dbconnection,connectToDB};
+export { dbconnection, connectToDB };

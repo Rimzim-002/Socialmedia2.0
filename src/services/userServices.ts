@@ -21,7 +21,7 @@ const UserExist = async (id: string | number) => {
     throw new Error(Messages.USER.USER_NOT_EXIST);
   }
 };
-const newUser = async (attributes: IUser)=> {
+const newUser = async (attributes: IUser) => {
   const { name, email, password } = attributes;
   try {
     const hashPassword = await bcrypt.hash(password, 8);
@@ -30,7 +30,7 @@ const newUser = async (attributes: IUser)=> {
       email,
       password: hashPassword,
     });
-    return user
+    return user;
   } catch (error: any) {
     throw new Error(error);
   }

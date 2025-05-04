@@ -83,7 +83,7 @@ const addLike = async (req: Request, res: Response) => {
       type,
       post_id: type === 'post' ? post_id : null,
       comment_id: type === 'comment' ? comment_id : null,
-      status: 'like', // include this explicitly
+      status: 'like',
     };
 
     const createdLike = await createLike(data);
@@ -93,8 +93,7 @@ const addLike = async (req: Request, res: Response) => {
       message: `Like added successfully to ${type}`,
       data: { createdLike },
     });
-  } 
-  catch (error: any) {
+  } catch (error: any) {
     console.error(error);
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
