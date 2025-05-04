@@ -1,22 +1,13 @@
 import express from 'express';
-import dbconnection from './config/dbconnection.js';
+import { connectToDB } from './config/dbconnection.js';
 import { config } from 'dotenv';
 import './models/userModel.js';
 import router from './Routes/routesEnum.js';
 config();
 const app = express();
 app.use(express.json());
-dbconnection
-    .authenticate()
-    .then(() => {
-    console.log(' Database connection sucessfull');
-})
-    .catch((err) => {
-    console.log(Error, 'unable to  connnect');
-});
+connectToDB;
 app.use(router);
-// const PORT = 5000 ;
-// console.log(PORT)
 app.listen(Number(process.env.port), () => {
     console.log(` Express server started   on port ${process.env.port}`);
 });
