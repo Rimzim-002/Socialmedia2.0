@@ -17,9 +17,16 @@ import apiResponse from '../utils/apiResponse.js';
     throw error;
   }
 };
-const getLikes = async (type: 'post' | 'comment', id: string | number) => {
-    return Likes.findAll({
-      where: type === 'post' ? { post_id: id } : { comment_id: id },
-    });
+const getLikes = async (attributes:IFetchLikes) => {
+    const{type,post_id, comment_id }= attributes
+    try {
+      const likes = await Likes.findAll({
+        where: type === 'post' ? { post_id } : { comment_id},
+      });
+      return likes;
+    } catch (error) {
+      console.error('Error in getLikes service:', error);
+      throw new Error('Failed to fetch likes');
+    }
   };
 export {createLike,getLikes}

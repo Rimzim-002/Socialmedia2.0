@@ -10,5 +10,5 @@ export  interface ILike {
     user_id?: string|number 
     post_id?: string|number;  
     comment_id?: string|number; 
-    type?: 'post' | 'comment'; 
+    type: 'post' | 'comment'; 
 }

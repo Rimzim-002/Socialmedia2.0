@@ -22,7 +22,8 @@ const Messages = {
         ACCESS_DENIED: 'Access denied! Unauthorized user',
     },
     LIKE: {
-        ALREADY_LIKE: " you alrady like it "
+        ALREADY_LIKE: " you alrady like it ",
+        FETCH_SUCCESS: "fetch success"
     },
     VALIDATION: {
         REQUIRED_FIELDS: 'Please fill in all required fields',

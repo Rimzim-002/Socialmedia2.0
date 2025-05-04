@@ -125,7 +125,7 @@ const fetchLikes = async (req: Request, res: Response) => {
     const validId = id as string | number;
 
     //  fetch likes
-    const likes = await getLikes(type, validId);
+    const likes = await getLikes({type, post_id, comment_id }as IFetchLikes);
 
    apiResponse.success(res, {
       status: ResponseCode.SUCCESS,

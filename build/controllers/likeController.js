@@ -5,10 +5,12 @@ import Likes from '../models/likesModel.js';
 import Posts from '../models/postModel.js';
 import Comments from '../models/commentsModel.js';
 import { findUSer } from '../services/postServices.js';
-import createLike from '../services/likeServices.js';
+import { createLike, getLikes } from '../services/likeServices.js';
+import addLikeSchema from '../utils/Validations/likeValidation.js';
 const addLike = async (req, res) => {
     const { user_id, type, post_id, comment_id } = req.body;
     try {
+        await addLikeSchema.validate(req.body, { abortEarly: false }); // validation
         //  Check if user exists
         const isUserExist = await findUSer(user_id);
         if (!isUserExist) {
@@ -85,4 +87,40 @@ const addLike = async (req, res) => {
         });
     }
 };
-export default addLike;
+const fetchLikes = async (req, res) => {
+    const { type, post_id, comment_id } = req.body;
+    try {
+        if (type !== 'post' && type !== 'comment') {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: 'Invalid type. It must be "post" or "comment".',
+                data: {},
+            });
+        }
+        const id = type === 'post' ? post_id : comment_id;
+        if (!id) {
+            apiResponse.error(res, {
+                status: ResponseCode.BAD_REQUEST,
+                message: 'ID is required to fetch likes.',
+                data: {},
+            });
+        }
+        const validId = id;
+        //  fetch likes
+        const likes = await getLikes({ type, post_id, comment_id });
+        apiResponse.success(res, {
+            status: ResponseCode.SUCCESS,
+            message: Messages.LIKE.FETCH_SUCCESS,
+            data: { count: likes.length, likes },
+        });
+    }
+    catch (error) {
+        console.error(error);
+        apiResponse.error(res, {
+            status: ResponseCode.SYSTEM,
+            message: 'Error fetching likes.',
+            data: { error: error.message },
+        });
+    }
+};
+export { addLike, fetchLikes };
