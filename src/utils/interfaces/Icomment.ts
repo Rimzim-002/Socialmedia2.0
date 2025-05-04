@@ -17,7 +17,7 @@ export interface IAddComment {
   
   export interface IUpdateComment {
     id: string|number;
-    user_id?:  string|number;
+    user_id:  string|number;
     content: string;
   }
   

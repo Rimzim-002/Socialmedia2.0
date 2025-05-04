@@ -5,27 +5,13 @@ import APIResponse from '../utils/apiResponse.js';
 import Tokenhandle from '../utils/jwtManager.js';
 import yup from 'yup';
 import apiResponse from '../utils/apiResponse.js';
+import { signinSchema, signupSchema, updateUserSchema } from '../utils/Validations/userValidation.js';
 //signup user
 const signupUser = async (req, res) => {
     const { name, email, password } = req.body;
     // validations
-    const SignuSchema = yup.object({
-        name: yup
-            .string()
-            .required('Name is required')
-            .min(2, 'Name must be at least 2 characters')
-            .matches(/^[a-zA-Z\s]+$/, 'Name must contain only letters'),
-        email: yup
-            .string()
-            .required('Email is required')
-            .email('Invalid email format'),
-        password: yup
-            .string()
-            .required('Password is required')
-            .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/, 'Password must be at least 8 characters, include uppercase, lowercase, and a number or special character'),
-    });
     try {
-        await SignuSchema.validate(req.body, { abortEarly: false });
+        await signupSchema.validate(req.body, { abortEarly: false });
         const isUserExist = await findbyEmail(email);
         // checks user already exist or not
         if (isUserExist) {
@@ -68,18 +54,8 @@ const signupUser = async (req, res) => {
 const signinUser = async (req, res) => {
     const { email, password } = req.body;
     // validations
-    const schema = yup.object().shape({
-        email: yup
-            .string()
-            .email('Invalid email format')
-            .required('Email is required'),
-        password: yup
-            .string()
-            .min(6, 'Password must be at least 6 characters')
-            .required('Password is required'),
-    });
     try {
-        await schema.validate(req.body, { abortEarly: false });
+        await signinSchema.validate(req.body, { abortEarly: false });
         const isUserExist = await findbyEmail(email);
         // user exist 
         if (!isUserExist) {
@@ -128,6 +104,7 @@ const signinUser = async (req, res) => {
 const updatedUser = async (req, res) => {
     const { id, updateData } = req.body;
     try {
+        await updateUserSchema.validate(req.body, { abortEarly: false });
         const isUserExist = await UserExist(id);
         if (!isUserExist) {
             apiResponse.error(res, {

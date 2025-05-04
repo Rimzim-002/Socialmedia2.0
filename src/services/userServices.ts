@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { Ilogin, IUser, IUserUpdate } from '../utils/interfaces/IUser.js';
 import Messages from '../utils/messagesManager.js';
 
-const findbyEmail = async (email: string): Promise<IUser | null> => {
+const findbyEmail = async (email: string) => {
   try {
     const isUserExist = await Users.findOne({
       where: { email },
@@ -13,7 +13,7 @@ const findbyEmail = async (email: string): Promise<IUser | null> => {
     throw new Error(Messages.USER.EMAIL_NOT_EXISTS);
   }
 };
-const UserExist = async (id: string | number): Promise<any> => {
+const UserExist = async (id: string | number)=> {
   try {
     const isExist = await Users.findByPk(id);
     return isExist;
@@ -35,7 +35,7 @@ const newUser = async (attributes: IUser): Promise<IUser | null> => {
     throw new Error(error);
   }
 };
-const userlogin = async (attributes: Ilogin): Promise<IUser | null> => {
+const userlogin = async (attributes: Ilogin) => {
   const { email, password } = attributes;
   try {
     const isUserExist = await Users.findOne({ where: { email } });
@@ -59,7 +59,7 @@ const userlogin = async (attributes: Ilogin): Promise<IUser | null> => {
 
 const updateUser = async (
   attributes: IUserUpdate,
-): Promise<IUserUpdate | null> => {
+)=> {
   const { id, updateData } = attributes;
   try {
     const userUpdate = await Users.update(updateData, { where: { id } });

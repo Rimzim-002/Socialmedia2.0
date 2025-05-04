@@ -73,6 +73,7 @@ const addComment = async (req: Request, res: Response) => {
     });
   }
 };
+// get all comments
 const getAllcomments = async (req: Request, res: Response) => {
   const { post_id, user_id } = req.body as IGetComments;
   
@@ -98,7 +99,7 @@ const getAllcomments = async (req: Request, res: Response) => {
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
       message: Messages.POST.POST_FOUND,
-      data: getComments,
+      data: {getComments},
     });
   } catch (error: any) {
     // Handling  the validation errors centrally
@@ -123,6 +124,7 @@ const getAllcomments = async (req: Request, res: Response) => {
     });
   }
 };
+//delete comment
 const deletecommnet = async (req: Request, res: Response) => {
   const { id, user_id } = req.body as IDeleteComment;
   
@@ -172,19 +174,18 @@ const deletecommnet = async (req: Request, res: Response) => {
 };
 const updatecomment = async (req: Request, res: Response) => {
   const { user_id, id, content } = req.body as IUpdateComment;
-  // if (!user_id) {
-  //    apiResponse.error(res, {
-  //     status: ResponseCode.BAD_REQUEST,
-  //     message: Messages.USER.USER_NOT_EXIST,
-  //     data: {},
-  //   });
-  // }
 
   try {
     await updateCommentSchema.validate(req.body, { abortEarly: false });
-
+    const isUserExist = await findUSer(user_id);//  check userexist 
+    if (!isUserExist) {
+      apiResponse.error(res, {
+        status: ResponseCode.BAD_REQUEST,
+        message: Messages.USER.USER_NOT_EXIST,
+        data: {},
+      });
+    }
     const isCommentexist = await CommentExist(id);// checks comment exist
-    // const isUserExist = await findUSer(user_id);// checks is user exist
     if (!isCommentexist) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
@@ -192,14 +193,8 @@ const updatecomment = async (req: Request, res: Response) => {
         data: {},
       });
     }
-    // if (!isUserExist) {
-    //   apiResponse.error(res, {
-    //     status: ResponseCode.BAD_REQUEST,
-    //     message: Messages.USER.USER_NOT_EXIST,
-    //     data: {},
-    //   });
-    // }
-    const updateData: IUpdateComment = { id, content }; // ✅ CORRECT
+  
+    const updateData: IUpdateComment = {user_id, id, content }; // ✅ CORRECT
 
     const updatedComment = await updateComment(updateData);
     res.status(ResponseCode.SUCCESS).json({
