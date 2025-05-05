@@ -24,7 +24,7 @@ const addLike = async (req, res) => {
         if (type !== 'post' && type !== 'comment') {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
-                message: 'Invalid type. It must be "post" or "comment".',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: {},
             });
         }
@@ -71,12 +71,12 @@ const addLike = async (req, res) => {
             type,
             post_id: type === 'post' ? post_id : null,
             comment_id: type === 'comment' ? comment_id : null,
-            status: 'like', // include this explicitly
+            status: 'like',
         };
         const createdLike = await createLike(data);
         apiResponse.success(res, {
             status: ResponseCode.SUCCESS,
-            message: `Like added successfully to ${type}`,
+            message: Messages.LIKE.CREATED_SUCCESSFULLY,
             data: { createdLike },
         });
     }
@@ -84,7 +84,7 @@ const addLike = async (req, res) => {
         console.error(error);
         apiResponse.error(res, {
             status: ResponseCode.SYSTEM,
-            message: 'An error occurred while adding the like.',
+            message: Messages.LIKE.ERROR,
             data: { error: error.message },
         });
     }
@@ -95,7 +95,7 @@ const fetchLikes = async (req, res) => {
         if (type !== 'post' && type !== 'comment') {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
-                message: 'Invalid type. It must be "post" or "comment".',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: {},
             });
         }
@@ -103,7 +103,7 @@ const fetchLikes = async (req, res) => {
         if (!id) {
             apiResponse.error(res, {
                 status: ResponseCode.BAD_REQUEST,
-                message: 'ID is required to fetch likes.',
+                message: Messages.SYSTEM.SERVER_ERROR,
                 data: {},
             });
         }
@@ -120,7 +120,7 @@ const fetchLikes = async (req, res) => {
         console.error(error);
         apiResponse.error(res, {
             status: ResponseCode.SYSTEM,
-            message: 'Error fetching likes.',
+            message: Messages.SYSTEM.SERVER_ERROR,
             data: { error: error.message },
         });
     }

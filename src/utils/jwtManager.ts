@@ -9,10 +9,6 @@ class Tokenhandle {
   static generateToken(user: IJwtPayload) {
     return jwt.sign(user, JWT_SECRET_KEY, { expiresIn: '1h' });
   }
-
-  static verifyToken(token: string): IJwtPayload {
-    return jwt.verify(token, JWT_SECRET_KEY) as IJwtPayload;
-  }
 }
 
 export default Tokenhandle;

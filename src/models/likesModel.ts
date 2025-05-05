@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import Posts from './postModel.js';
 import Users from './userModel.js';
 import Comments from './commentsModel.js';
+import logger from '../utils/logger.js';
 const Likes = dbconnection.define(
   'Likes',
   {
@@ -61,10 +62,10 @@ Likes.belongsTo(Comments, { foreignKey: 'Comment_id', as: 'comment' });
 
 Likes.sync()
   .then(() => {
-    console.log('Comments table created successfully');
+    logger.info('Comments table created successfully');
   })
   .catch((error) => {
-    console.error('Error creating table:', error);
+    logger.error('Error creating table:', error);
   });
 
 export default Likes;

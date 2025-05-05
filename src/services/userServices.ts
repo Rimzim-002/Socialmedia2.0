@@ -66,9 +66,9 @@ const updateUser = async (attributes: IUserUpdate) => {
       const data = await Users.findOne({ where: { id } });
       return data ? (data.toJSON() as IUserUpdate) : null;
     }
-    throw new Error('User update failed');
+    throw new Error(Messages.USER.FAILED);
   } catch (error) {
-    throw new Error('Error occurred while updating user');
+    throw new Error(Messages.VALIDATION.INVALID_INPUT);
   }
 };
 

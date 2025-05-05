@@ -18,6 +18,7 @@ const createComment = async (attributes: IAddComment) => {
     }
 
     const newComment = await Comments.create({
+      // new comment
       post_id,
       user_id,
       content,
@@ -30,6 +31,7 @@ const createComment = async (attributes: IAddComment) => {
   }
 };
 const fetchCommnets = async (post_id: string | number) => {
+  // fetch comment
   try {
     const postComments = await Comments.findAll({
       where: { post_id, is_delete: false },
@@ -43,6 +45,7 @@ const fetchCommnets = async (post_id: string | number) => {
   }
 };
 const CommentExist = async (id: string | number) => {
+  // comment exist
   try {
     const data = await Comments.findByPk(id);
     return data;
@@ -52,6 +55,7 @@ const CommentExist = async (id: string | number) => {
 };
 
 const destroyComment = async (id: string | number) => {
+  //delete comment
   try {
     const data = await Comments.update({ is_delete: true }, { where: { id } });
     return data;
@@ -60,6 +64,7 @@ const destroyComment = async (id: string | number) => {
   }
 };
 const updateComment = async ({ id, content }: IUpdateComment) => {
+  // update commnet
   try {
     const [data] = await Comments.update({ content }, { where: { id } });
     if (data) {

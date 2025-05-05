@@ -29,7 +29,7 @@ const addLike = async (req: Request, res: Response) => {
     if (type !== 'post' && type !== 'comment') {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
-        message: 'Invalid type. It must be "post" or "comment".',
+        message: Messages.VALIDATION.INVALID_INPUT,
         data: {},
       });
     }
@@ -90,7 +90,7 @@ const addLike = async (req: Request, res: Response) => {
 
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
-      message:Messages.LIKE.CREATED_SUCCESSFULLY,
+      message: Messages.LIKE.CREATED_SUCCESSFULLY,
       data: { createdLike },
     });
   } catch (error: any) {
@@ -109,7 +109,7 @@ const fetchLikes = async (req: Request, res: Response) => {
     if (type !== 'post' && type !== 'comment') {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
-        message: 'Invalid type. It must be "post" or "comment".',
+        message: Messages.VALIDATION.INVALID_INPUT,
         data: {},
       });
     }
@@ -119,7 +119,7 @@ const fetchLikes = async (req: Request, res: Response) => {
     if (!id) {
       apiResponse.error(res, {
         status: ResponseCode.BAD_REQUEST,
-        message: 'ID is required to fetch likes.',
+        message: Messages.SYSTEM.SERVER_ERROR,
         data: {},
       });
     }
@@ -138,7 +138,7 @@ const fetchLikes = async (req: Request, res: Response) => {
     console.error(error);
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: 'Error fetching likes.',
+      message: Messages.SYSTEM.SERVER_ERROR,
       data: { error: error.message },
     });
   }

@@ -6,8 +6,5 @@ class Tokenhandle {
     static generateToken(user) {
         return jwt.sign(user, JWT_SECRET_KEY, { expiresIn: '1h' });
     }
-    static verifyToken(token) {
-        return jwt.verify(token, JWT_SECRET_KEY);
-    }
 }
 export default Tokenhandle;

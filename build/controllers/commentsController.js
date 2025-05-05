@@ -42,7 +42,7 @@ const addComment = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -91,7 +91,7 @@ const getAllcomments = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -136,7 +136,7 @@ const deletecommnet = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -168,7 +168,7 @@ const updatecomment = async (req, res) => {
                 data: {},
             });
         }
-        const updateData = { user_id, id, content }; // ✅ CORRECT
+        const updateData = { user_id, id, content };
         const updatedComment = await updateComment(updateData);
         res.status(ResponseCode.SUCCESS).json({
             Messages: Messages.USER.SIGNUP_SUCCESS,
@@ -184,7 +184,7 @@ const updatecomment = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -231,7 +231,7 @@ const getComment = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }

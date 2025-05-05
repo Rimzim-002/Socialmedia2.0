@@ -36,7 +36,7 @@ const addPost = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -140,7 +140,7 @@ const deletePost = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -183,7 +183,7 @@ const allPosts = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -226,7 +226,7 @@ const userPost = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }

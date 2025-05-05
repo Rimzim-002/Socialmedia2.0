@@ -2,7 +2,7 @@
 
 import Likes from '../models/likesModel.js';
 import { ILike, IFetchLikes } from '../utils/interfaces/Ilike.js';
-import apiResponse from '../utils/apiResponse.js';
+import Messages from '../utils/messagesManager.js';
 const createLike = async (likeData: ILike) => {
   try {
     const newLike = await Likes.create({
@@ -24,7 +24,6 @@ const getLikes = async (attributes: IFetchLikes) => {
     });
     return likes;
   } catch (error) {
-    console.error('Error in getLikes service:', error);
     throw new Error('Failed to fetch likes');
   }
 };

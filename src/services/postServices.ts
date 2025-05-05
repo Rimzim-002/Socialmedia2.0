@@ -14,13 +14,11 @@ const findUSer = async (userID: string | number) => {
       return isUserExist;
     }
   } catch (error: any) {
-    throw new Error(`Error while finding user: ${error.message}`);
+    throw new Error(Messages.POST.POST_NOT_FOUND);
   }
 };
 
-const postData = async (
-  attributes: Ipost,
-): Promise<InstanceType<typeof Posts>> => {
+const postData = async (attributes: Ipost) => {
   try {
     const { user_id, image, caption } = attributes;
     const createNewPost = await Posts.create({
@@ -41,7 +39,7 @@ const postExist = async (postId: string | number) => {
       return isPostExist;
     }
   } catch (error: any) {
-    throw new Error(`Error while checking post existence: ${error.message}`);
+    throw new Error(Messages.POST.POST_NOT_FOUND);
   }
 };
 
@@ -55,7 +53,7 @@ const postAvail = async (postId: string | number) => {
       return isPostExist;
     }
   } catch (error: any) {
-    throw new Error(`Error while checking post availability: ${error.message}`);
+    throw new Error(Messages.POST.POST_NOT_FOUND);
   }
 };
 
@@ -70,7 +68,7 @@ const postUpdate = async (attributes: PostUpdate) => {
       return updatedPost;
     }
   } catch (error: any) {
-    throw new Error(`Error while updating post: ${error.message}`);
+    throw new Error(Messages.VALIDATION.INVALID_INPUT);
   }
 };
 
@@ -102,7 +100,7 @@ const userposts = async (user_id: string | number) => {
 
     return posts;
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to fetch user posts');
+    throw new Error(error.message || Messages.POST.POST_UPDATED_FAIL);
   }
 };
 

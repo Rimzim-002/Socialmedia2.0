@@ -38,7 +38,7 @@ const signupUser = async (req, res) => {
             }));
             APIResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -75,7 +75,7 @@ const signinUser = async (req, res) => {
             });
             APIResponse.success(res, {
                 status: 200,
-                message: 'Login successful',
+                message: Messages.USER.LOGIN_SUCCESS,
                 data: { loginUser, token },
             });
         }
@@ -89,7 +89,7 @@ const signinUser = async (req, res) => {
             }));
             APIResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }
@@ -140,7 +140,7 @@ const updatedUser = async (req, res) => {
             }));
             apiResponse.error(res, {
                 status: 400,
-                message: 'Validation failed',
+                message: Messages.VALIDATION.INVALID_INPUT,
                 data: simplifiedErrors,
             });
         }

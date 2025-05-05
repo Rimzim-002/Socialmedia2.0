@@ -3,6 +3,7 @@ import { dbconnection } from '../config/dbconnection.js';
 import { nanoid } from 'nanoid';
 import Posts from './postModel.js';
 import Users from './userModel.js';
+import logger from '../utils/logger.js';
 const Comments = dbconnection.define('Comments', {
     id: {
         type: DataTypes.STRING,
@@ -54,9 +55,9 @@ Comments.hasMany(Comments, { foreignKey: 'reply_id', as: 'replies' });
 Comments.belongsTo(Comments, { foreignKey: 'reply_id', as: 'parentComment' });
 Comments.sync()
     .then(() => {
-    console.log('Comments table created successfully');
+    logger.info('Comments table created successfully');
 })
     .catch((error) => {
-    console.error('Error creating table:', error);
+    logger.error('Error creating table:', error);
 });
 export default Comments;

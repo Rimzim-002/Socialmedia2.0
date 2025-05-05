@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 import { dbconnection } from '../config/dbconnection.js';
 import Users from './userModel.js';
 import { nanoid } from 'nanoid';
+import logger from '../utils/logger.js';
 const Posts = dbconnection.define(
   'posts',
   {
@@ -43,9 +44,9 @@ Posts.belongsTo(Users, { foreignKey: 'user_id' });
 
 Posts.sync()
   .then(() => {
-    console.log('  POST table created successfully');
+    logger.info('  POST table created successfully');
   })
   .catch((error) => {
-    console.error('Error creating table:', error);
+    logger.error('Error creating table:', error);
   });
 export default Posts;
