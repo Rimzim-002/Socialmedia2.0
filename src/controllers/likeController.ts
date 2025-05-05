@@ -90,14 +90,14 @@ const addLike = async (req: Request, res: Response) => {
 
     apiResponse.success(res, {
       status: ResponseCode.SUCCESS,
-      message: `Like added successfully to ${type}`,
+      message:Messages.LIKE.CREATED_SUCCESSFULLY,
       data: { createdLike },
     });
   } catch (error: any) {
     console.error(error);
     apiResponse.error(res, {
       status: ResponseCode.SYSTEM,
-      message: 'An error occurred while adding the like.',
+      message: Messages.LIKE.ERROR,
       data: { error: error.message },
     });
   }

@@ -199,7 +199,7 @@ const updatecomment = async (req: Request, res: Response) => {
       });
     }
 
-    const updateData: IUpdateComment = { user_id, id, content }; // ✅ CORRECT
+    const updateData: IUpdateComment = { user_id, id, content }; 
 
     const updatedComment = await updateComment(updateData);
     res.status(ResponseCode.SUCCESS).json({

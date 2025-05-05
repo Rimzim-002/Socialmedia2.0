@@ -24,6 +24,8 @@ const Messages = {
   LIKE: {
     ALREADY_LIKE: ' you alrady like it ',
     FETCH_SUCCESS: 'fetch success',
+    CREATED_SUCCESSFULLY:'like create  successfuly',
+    ERROR:'error  occour '
   },
   VALIDATION: {
     REQUIRED_FIELDS: 'Please fill in all required fields',
