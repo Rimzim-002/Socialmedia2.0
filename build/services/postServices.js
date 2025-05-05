@@ -11,7 +11,7 @@ const findUSer = async (userID) => {
         }
     }
     catch (error) {
-        throw new Error(`Error while finding user: ${error.message}`);
+        throw new Error(Messages.POST.POST_NOT_FOUND);
     }
 };
 const postData = async (attributes) => {
@@ -36,7 +36,7 @@ const postExist = async (postId) => {
         }
     }
     catch (error) {
-        throw new Error(`Error while checking post existence: ${error.message}`);
+        throw new Error(Messages.POST.POST_NOT_FOUND);
     }
 };
 const postAvail = async (postId) => {
@@ -49,7 +49,7 @@ const postAvail = async (postId) => {
         }
     }
     catch (error) {
-        throw new Error(`Error while checking post availability: ${error.message}`);
+        throw new Error(Messages.POST.POST_NOT_FOUND);
     }
 };
 const postUpdate = async (attributes) => {
@@ -62,7 +62,7 @@ const postUpdate = async (attributes) => {
         }
     }
     catch (error) {
-        throw new Error(`Error while updating post: ${error.message}`);
+        throw new Error(Messages.VALIDATION.INVALID_INPUT);
     }
 };
 const postdelete = async (id) => {
@@ -90,7 +90,7 @@ const userposts = async (user_id) => {
         return posts;
     }
     catch (error) {
-        throw new Error(error.message || 'Failed to fetch user posts');
+        throw new Error(error.message || Messages.POST.POST_UPDATED_FAIL);
     }
 };
 export { findUSer, postData, postExist, postUpdate, postdelete, userposts, postAvail, };

@@ -1,6 +1,5 @@
-
+// services/likeService.ts
 import Likes from '../models/likesModel.js';
-import Messages from "../utils/messagesManager.js"
 const createLike = async (likeData) => {
     try {
         const newLike = await Likes.create({
@@ -24,8 +23,7 @@ const getLikes = async (attributes) => {
         return likes;
     }
     catch (error) {
-        
-        throw new Error(Messages.LIKE.ERROR);
+        throw new Error('Failed to fetch likes');
     }
 };
 export { createLike, getLikes };

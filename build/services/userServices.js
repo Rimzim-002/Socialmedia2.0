@@ -62,10 +62,10 @@ const updateUser = async (attributes) => {
             const data = await Users.findOne({ where: { id } });
             return data ? data.toJSON() : null;
         }
-        throw new Error('User update failed');
+        throw new Error(Messages.USER.FAILED);
     }
     catch (error) {
-        throw new Error('Error occurred while updating user');
+        throw new Error(Messages.VALIDATION.INVALID_INPUT);
     }
 };
 export { findbyEmail, newUser, userlogin, UserExist, updateUser };
